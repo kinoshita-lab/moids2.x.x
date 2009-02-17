@@ -1,0 +1,11 @@
+About:
+"moids-app.cpp" is an arduino program for our new artwork "moids 2.0".
+You need at least arduino(pro, nano, duemilanove, etc.) to run this program.
+We have confirmed this program works on aruduino-0012 version.
+
+Being just a first commit, there are few information so far...
+We will add schematics, libraries, docs for whole system in a few weeks.
+Please wait for a while.
+
+CopyLeft by Kinoshita-lab 2009
+All your base are belong to us
