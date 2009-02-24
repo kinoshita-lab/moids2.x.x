@@ -1,4 +1,4 @@
-#include <MsTimer2.h>
+#include "UsTimer2.h"
 
 /* ========================================================================
   CONSTANTS
@@ -14,7 +14,7 @@ static const int LED_BRIGHTNESS_SOUND_GENERATING = 255;
 /* ========================================================================
   FUNCTION PROTOTYPES
 ========================================================================= */
-void timerProcess(); // for timer processing
+void timerProc(); // for timer processing
 void soundInputStateProcess(const int i); // state specific process(sound input and waiting)
 void generateSoundStateProcess(const int i); // state specific process (sound generation fired)
 void readAnalogInput(const int i);
@@ -60,8 +60,8 @@ void setup()
     pinMode(soundDevices[i], OUTPUT);
   } 
 
-  MsTimer2::set(1, timerProc);
-  MsTimer2::start();
+  UsTimer2::set(1, timerProc);
+  UsTimer2::start();
 }
 /* -----------------------------------------------------------------------
   loop
