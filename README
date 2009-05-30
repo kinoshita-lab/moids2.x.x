@@ -15,8 +15,14 @@ The destination is depends on where you have installed Arduino.
 2. Start Arduino environment and open moids_arduino.pde, compile and upload to I/O board.
 
 * Lisence
-These source codes are completely public domain.
+
+MsTimer2 library is a work by Javier Valencia, and has LGPL Lisence.
+The other source codes are completely public domain, 
 You can modify, distribute as you like.
+
+The author thinks this form of distribution has no problems for those which contains LGPL libraries.
+When it is not, please contact me.
+saita[at]kinoshita-lab.org
 
 ---
 Kinoshita-lab 2009
