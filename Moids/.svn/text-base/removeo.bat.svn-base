@@ -1,1 +1,0 @@
-del Moids.o
