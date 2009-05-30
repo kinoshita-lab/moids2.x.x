@@ -1,0 +1,369 @@
+#include "WProgram.h"
+#include "Moids.h"
+
+// 各段階の長さ[秒]
+const unsigned int Moids::m_scenarioLengthTable[] =
+{
+    20, // InitialSequence
+    20, // Transition
+    20, // Interactive
+};
+
+/// @todo シーケンスの箱を作る
+/// @todo なるかならないかを%で決める機構を作る
+
+// この段階に進んだときの状態を決める　シーケンス時
+void Moids::changeOnScenarioStart_InitialSequence()
+{
+    m_threshold = 0; // threshold
+    m_soundInputWaitFireCounterLimit = 10; // wait for firing sound after detection
+    m_soundInputOnTimeCounterLimit = 10; // relay on time
+    m_soundInputOnTimeCounter = 0;
+}
+
+// この段階に進んだときの状態を決める　遷移時
+void Moids::changeOnScenarioStart_Transition()
+{
+//    m_threshold = ???; // threshold
+//    m_soundInputWaitFireCounterLimit = ???; // wait for firing sound after detection
+//    m_soundInputOnTimeCounterLimit = ???; // relay on time
+//    m_soundInputOnTimeCounter = ???;
+    m_soundInputOnTimeCounter = 0;
+
+}
+
+// この段階に進んだときの状態を決める　インタラクティブ時
+void Moids::changeOnScenarioStart_Interactive()
+{
+//    m_threshold = ???; // threshold
+//    m_soundInputWaitFireCounterLimit = ???; // wait for firing sound after detection
+//    m_soundInputOnTimeCounterLimit = ???; // relay on time
+//    m_soundInputOnTimeCounter = ???;
+        m_soundInputOnTimeCounter = 0;
+
+}
+
+// 反応後1回ごとに変える シーケンス時
+void Moids::changeOnEachSoundDetection_InitialSequence()
+{
+//    m_threshold = ???; // threshold
+//    m_soundInputWaitFireCounterLimit = ???; // wait for firing sound after detection
+//    m_soundInputOnTimeCounterLimit = ???; // relay on time
+//    m_soundInputOnTimeCounter = ???;
+}
+
+// 反応後1回ごとに変える 遷移時
+void Moids::changeOnEachSoundDetectionO_Transition()
+{
+//    m_threshold = ???; // threshold
+//    m_soundInputWaitFireCounterLimit = ???; // wait for firing sound after detection
+//    m_soundInputOnTimeCounterLimit = ???; // relay on time
+//    m_soundInputOnTimeCounter = ???;
+}
+
+// 反応後1回ごとに変える インタラクティブ時
+void Moids::changeOnEachSoundDetection_Interactive()
+{
+//    m_threshold = ???; // threshold
+//    m_soundInputWaitFireCounterLimit = ???; // wait for firing sound after detection
+//    m_soundInputOnTimeCounterLimit = ???; // relay on time
+//    m_soundInputOnTimeCounter = ???;
+}
+
+///////////////////////////////////////////////////
+// ベルリンの壁
+///////////////////////////////////////////////////
+
+
+void Moids::changeOnScenarioStart()
+{
+    switch (m_scenario)
+    {
+    case InitialSequence:
+	changeOnScenarioStart_InitialSequence();
+	break;
+    case Transition:
+	changeOnScenarioStart_Transition();
+	break;
+    case Interactive:
+	changeOnScenarioStart_Interactive();
+	break;
+    default:
+	break;
+    }
+}
+
+void Moids::changeScenario(const int scenario)
+{
+    m_scenario = static_cast< SequenceScenario >(scenario);
+    changeOnScenarioStart();
+}
+
+Moids::Moids()
+    :
+    m_timerCounter(0),
+    m_secCounter(0),
+    m_inputMicPin(0),
+    m_outputLEDPin(0),
+    m_outputRelayPin(0),
+    m_threshold(0),
+    m_soundInputWaitFireCounterLimit(0)
+    m_soundInputWaitFireCounter(0),
+    m_soundInputOnTimeCounterLimit(0),
+    m_soundInputOnTimeCounter(0)
+{
+    m_micInput[0] = 0;
+    m_micInput[1] = 0;
+    init();
+}
+
+void Moids::init()
+<<<<<<< .mine
+{
+    randomSeed(analogRead(0));
+    m_fireProbability = 5;
+    
+    m_scenarioFunction = &Moids::interactiveSequenceScenario;
+    m_stateFunction = &Moids::tickReadAnalogState;
+    
+    m_timerCounter = 0;
+    m_secCounter = 0;
+    m_scenario = Interactive;
+    m_threshold = 0;
+ 
+    m_soundInputWaitFireCounterLimit = 30; // wait for firing sound
+    m_soundInputWaitFireCounter = 0;
+    
+    m_soundInputOnTimeCounterLimit = 20; // relay on time
+    m_soundInputOnTimeCounter = 0;
+
+=======
+{    
+    changeScenario(InitialSequence);
+>>>>>>> .r9
+    changeState(ReadAnalog);
+}
+
+void Moids::loop()
+{
+    // nop when sequence mode;
+    if (InitialSequence == m_scenario)
+    {
+	return;
+    }
+    
+    switch (m_state)
+    {
+    case ReadAnalog:
+	readAnalogInput();
+	break;
+    default:
+	break;
+    }
+}
+
+void Moids::readAnalogInput()
+{
+    // read Input 2 times
+    for (int i = 0; i < MIC_INPUT_ARRAY_LENGTH; i++)
+    {
+	m_micInput[i] = analogRead(m_inputMicPin);
+    }
+
+    // check threshold
+    if ( abs(m_micInput[0] - m_micInput[1]) >= m_threshold)
+    {
+	changeState(SoundInput);
+    }
+}
+
+<<<<<<< .mine
+
+void Moids::setInputMicPin(const int pin)
+{
+    m_inputMicPin = pin;
+}
+
+void Moids::setOutputLEDPin(const int pin)
+{
+    m_outputLEDPin = pin;
+    pinMode(pin, OUTPUT);
+}
+	
+void Moids::setOutputRelayPin(const int pin)
+{
+    m_outputRelayPin = pin;
+    pinMode(pin, OUTPUT);
+}
+
+=======
+>>>>>>> .r9
+// tick from MsTimer2, assuming tick cycle is 125 usec 
+void Moids::tick()
+{
+    m_timerCounter++;
+	
+    if (m_timerCounter > COUNTER_PER_1SEC)
+    {
+	m_secCounter++;
+
+	if (InitialSequence == m_scenario)
+	{
+	    m_soundInputOnTimeCounterLimit++;
+	}
+	m_timerCounter = 0;
+	transitToNextScenario();
+    }
+    
+    (this->*m_scenarioFunction)();
+    (this->*m_stateFunction)();
+}
+
+void Moids::transitToNextScenario()
+{
+    if (m_secCounter <  m_scenarioLengthTable[m_scenario])
+    {
+	return;
+    }
+
+    m_secCounter = 0;
+	
+    switch (m_scenario)
+    {    
+    case InitialSequence:
+	changeScenario(Transition);
+	m_fireProbability = 100;
+	break;
+    case Transition:
+	changeScenario(Interactive);
+	m_fireProbability = 100;
+	break;
+    case Interactive:
+	changeScenario(InitialSequence);
+	m_fireProbability = 20;
+	break;
+    default:
+	break;
+    }
+}
+
+<<<<<<< .mine
+void Moids::initialSequenceScenario()
+{
+    if (m_state != ReadAnalog)
+    {
+	return;
+    }
+
+    // force changing
+    m_state = SoundInput;
+}
+
+void Moids::transitionScenario()
+{
+    //m_threshold++;
+}
+
+void Moids::interactiveSequenceScenario()
+{
+    //m_threshold++;
+}
+
+=======
+>>>>>>> .r9
+void Moids::tickReadAnalogState()
+{
+    // nop
+}
+void Moids::tickSoundInputState()
+{
+    m_soundInputWaitFireCounter++;
+
+    if (m_soundInputWaitFireCounter > m_soundInputWaitFireCounterLimit)
+    {
+	int randomValue = random(1001);
+	if (randomValue <= m_fireProbability)
+	{
+	    digitalWrite(m_outputRelayPin, HIGH);
+	    analogWrite(m_outputLEDPin, LED_BRIGHTNESS_SOUND_GENERATING);
+	}
+
+	m_soundInputWaitFireCounter = 0;
+	changeState(GenerateSound);
+    }
+}
+
+void Moids::tickGenerateSoundState()
+{
+    m_soundInputOnTimeCounter++;
+
+    if (m_soundInputOnTimeCounter > m_soundInputOnTimeCounterLimit)
+    {
+	digitalWrite(m_outputRelayPin, LOW);
+	m_soundInputOnTimeCounter = 0;
+<<<<<<< .mine
+	analogWrite(m_outputLEDPin, LED_BRIGHTNESS_WAITING);
+=======
+	changeOnEachSoundDetection();
+>>>>>>> .r9
+	changeState(ReadAnalog);
+    }
+}
+
+void Moids::changeOnEachSoundDetection()
+{
+    switch (m_scenario)
+    {
+    case InitialSequence:
+	changeOnEachSoundDetection_InitialSequence();  
+	break;
+    case Transition:
+	changeOnEachSoundDetectionO_Transition();
+	break;
+    case Interactive:
+	changeOnEachSoundDetection_Interactive();
+	break;
+    default:
+	break;
+    }
+}
+
+void Moids::changeState(const int state)
+{
+    m_state = static_cast< MoidsState >(state);
+
+    switch (m_state)
+    {
+    case ReadAnalog:
+	m_stateFunction = &Moids::tickReadAnalogState;
+	analogWrite(m_outputLEDPin, LED_BRIGHTNESS_WAITING);
+	break;
+    case SoundInput:
+	m_stateFunction = &Moids::tickSoundInputState;
+	//analogWrite(m_outputLEDPin, LED_BRIGHTNESS_INPUT_DETECTED);
+	break;
+    case GenerateSound:
+	m_stateFunction = &Moids::tickGenerateSoundState;
+	
+	break;
+    default:
+	break;
+    }
+}
+
+void Moids::setInputMicPin(const int pin)
+{
+    m_inputMicPin = pin;
+}
+    
+void Moids::setOutputLEDPin(const int pin)
+{
+    m_outputLEDPin = pin;
+    pinMode(pin, OUTPUT);
+}
+	
+void Moids::setOutputRelayPin(const int pin)
+{
+    m_outputRelayPin = pin;
+    pinMode(pin, OUTPUT);
+}
