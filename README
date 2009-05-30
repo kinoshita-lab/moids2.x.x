@@ -1,11 +1,22 @@
-About:
-"moids-app.cpp" is an arduino program for our new artwork "moids 2.0".
-You need at least arduino(pro, nano, duemilanove, etc.) to run this program.
-We have confirmed this program works on aruduino-0012 version.
+* About
+These files are source codes for an artwork "moids 2.0".
+You need at least arduino(pro, nano, duemilanove, etc.) or some alternatives to run this program.
+We have confirmed this program works on aruduino-0015 version so far.
 
-Being just a first commit, there are few information so far...
-We will add schematics, libraries, docs for whole system in a few weeks.
-Please wait for a while.
+When you want to know more about moids, please visit our website
+http://www.moids.org/
 
-CopyLeft by Kinoshita-lab 2009
-All your base are belong to us
+* Instructions
+Being Arduino is not a comfortable developping environment for multiple sources, and the author has not arranged some scripts to do this task yet, you need to copy class libraries by hand every time you update sources.
+
+1. Copy the 2 folders, "MsTimer2" , "Moids" to Arduino-****/hardware/libraries/
+The destination is depends on where you have installed Arduino.
+
+2. Start Arduino environment and open moids_arduino.pde, compile and upload to I/O board.
+
+* Lisence
+These source codes are completely public domain.
+You can modify, distribute as you like.
+
+---
+Kinoshita-lab 2009
