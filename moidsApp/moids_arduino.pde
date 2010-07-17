@@ -74,7 +74,7 @@ volatile int* moids_on = &moids_on_table[0];
 
 volatile int moids_wait_table[] =
 {
-    2000,
+    375,
 };
 volatile int* moids_wait = &moids_wait_table[0];
 
@@ -380,10 +380,10 @@ void setNextSequenceData()
 	chooseMoidsThreshold(2);
 	break;
     case moids5:
-	chooseMoidsThreshold(3);
+	chooseMoidsThreshold(2);
 	break;
     case moids4:
-	chooseMoidsThreshold(3);
+	chooseMoidsThreshold(2);
 	break;
     case moids_dead5:
 	chooseMoidsThreshold(5);
@@ -539,7 +539,7 @@ void loop()
     }
     else if (showaMode)
     {
-	makeShowa();
+      	makeShowa();
 	return;
     }
     else if (moidsMode)
