@@ -56,14 +56,14 @@ void Moids::init()
 
 void Moids::makeOffset()
 {
-    float offset = 0.f;
+	float offset = 0.f;
 
 	for (int i = 0; i < 100; i++)
-    {
+	{
 		offset += 0.01 * analogRead(m_inputMicPin);
-    }
+	}
 
-    m_micOffset = (int)offset;
+	m_micOffset = (int) offset;
 }
 
 void Moids::setMicThreshold(const int thres)
@@ -83,21 +83,21 @@ void Moids::setWaitAfterSoundDetect(const int time)
 
 void Moids::loop()
 {
-    if (ReadAnalog == m_state)
-    {
+	if (ReadAnalog == m_state)
+	{
 		readAnalogInput();
-    }
+	}
 }
 
 void Moids::readAnalogInput()
 {
-    if (m_dontReadCounter)
-    {
+	if (m_dontReadCounter)
+	{
 		return;
-    }
-    
-    if (m_firstTimeAfterStateTransition)
-    {
+	}
+
+	if (m_firstTimeAfterStateTransition)
+	{
 		m_firstTimeAfterStateTransition = false;
 		makeOffset();
 
@@ -106,19 +106,19 @@ void Moids::readAnalogInput()
 		{
 			m_micInput[i] = read;
 		}
-    }
+	}
 
-    // read Input
-    m_micInput[0] = analogRead(m_inputMicPin) - m_micOffset;
+	// read Input
+	m_micInput[0] = analogRead(m_inputMicPin) - m_micOffset;
 
-    // check threshold
-    bool changed =  checkInput();
-    m_micInput[1] = m_micInput[0];
+	// check threshold
+	bool changed = checkInput();
+	m_micInput[1] = m_micInput[0];
 
-    if (changed)
-    {
+	if (changed)
+	{
 		changeState(SoundInput);
-    }
+	}
 }
 
 bool Moids::checkInput()

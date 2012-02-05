@@ -1,28 +1,29 @@
-* About
-These files are source codes for an artwork "moids 2.0".
+# About
+These files are source codes for an artwork "moids 2.0.x".
 You need at least arduino(pro, nano, duemilanove, etc.) or some alternatives to run this program.
-We have confirmed this program works on aruduino-0015 version so far.
+We have confirmed this program works on Arduino-1.0 version so far.
 
-When you want to know more about moids, please visit our website
+When you want to know more about moids, please visit our website or watch video on youtube.
 http://www.moids.org/
+http://www.youtube.com/watch?v=-VmGS8YM7mo
 
-* Instructions
-Being Arduino is not a comfortable developping environment for multiple sources, and the author has not arranged some scripts to do this task yet, you need to copy class libraries by hand every time you update sources.
+# Instructions
 
-1. Copy the 2 folders, "MsTimer2" , "Moids" to Arduino-****/hardware/libraries/
-The destination is depends on where you have installed Arduino.
+1. get sources
+   git clone https://github.com/kinoshita-lab/moids-app.git
 
-2. Start Arduino environment and open moids_arduino.pde, compile and upload to I/O board.
+2. connect some devices refer to the schematics
 
-* Lisence
+2. start Arduino environment, open moids_arduino.ino, verify and upload to I/O board.
+
+# Lisence
 
 MsTimer2 library is a work by Javier Valencia, and has LGPL Lisence.
-The other source codes are completely public domain, 
+
+The others are completely public domain, 
 You can modify, distribute as you like.
 
-The author thinks this form of distribution has no problems for those which contains LGPL libraries.
-When it is not, please contact me.
 saita[at]kinoshita-lab.org
 
 ---
-Kinoshita-lab 2009
+Kinoshita-lab 2009-2012
