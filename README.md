@@ -16,7 +16,9 @@ When you want to know more about moids, please visit our website or watch video 
 
 2. connect some devices refer to the schematics
 
-2. start Arduino environment, open moids_arduino.ino, verify and upload to I/O board.
+3. start Arduino environment, open moids_arduino.ino, verify and upload to I/O board.
+
+4. repeat step 2 and 3 more than 400 times.
 
 # Lisence
 
