@@ -46,7 +46,7 @@ void MsTimer2::set(unsigned long ms, void (*f)()) {
 	if ((F_CPU >= 1000000UL) && (F_CPU <= 16000000UL)) {	// prescaler set to 64
 		TCCR2B |= (1<<CS22);
 		TCCR2B &= ~((1<<CS21) | (1<<CS20));
-		prescaler = 512.f; // 125uSec resolution // original 64.f;
+		prescaler = 512.f; // 125uSec resolution // original was 64.f;
 	} else if (F_CPU < 1000000UL) {	// prescaler set to 8
 		TCCR2B |= (1<<CS21);
 		TCCR2B &= ~((1<<CS22) | (1<<CS20));

@@ -7,34 +7,25 @@ class Moids
 public:
     // ctor
     Moids();
-
-    // 初期化
+	
     void init();
-    void setInputMicPin(const int pin);
+
+	void setInputMicPin(const int pin);
     void setOutputLEDPin(const int pin);
     void setOutputRelayPin(const int pin);
-
-    // 閾値の設定
     void setMicThreshold(const int thres);
-
-    // on時間の設定
     void setRelayOnTime(const int time);
-
-    // 反応するまでの時間
     void setWaitAfterSoundDetect(const int time);
-    // タイマーのコールバック
+    // timer callback
     void tick();
 
-    // loop からマイクの音量を読みに行く
+    // called from main loop
     void loop();
-
-    // 他の虫を登録する
+	
     void registerOtherMoids(Moids* moids);
-
-    // 他の虫に自分が反応して音を出していることを知らせる
+	
     void broadCastGenerateSoundState(bool start);
-
-    // 他の虫からのメッセージを受信する
+	
     void receiveOtherMoidsMessageSoundState(bool start, int relayPin);
     
 private:
@@ -52,12 +43,13 @@ private:
     // enum for interactive functions
     enum MoidsState
     {
-	ReadAnalog = 0,
-	SoundInput,
-	GenerateSound,
-	Nop,
-	NumberOfStates,
+		ReadAnalog = 0,
+		SoundInput,
+		GenerateSound,
+		Nop,
+		NumberOfStates,
     };
+	
     int m_state;
     
     // state functions
@@ -66,6 +58,7 @@ private:
     void tickSoundInputState();
     void tickGenerateSoundState();
     void tickNopState();
+
     // function pointer for state
     void (Moids::*m_stateFunction)();
     
@@ -79,7 +72,8 @@ private:
     // mic input workaround
     void readAnalogInput();
     bool checkInput();
-    static const int MIC_INPUT_ARRAY_LENGTH = 2;
+
+	static const int MIC_INPUT_ARRAY_LENGTH = 2;
     volatile int m_micInput[2];
     bool m_firstTimeAfterStateTransition;
     volatile int m_dontReadCounter;
@@ -93,6 +87,7 @@ private:
 
     static const int NUM_OTHER_MOIDS = 2;
     volatile int m_numOtherMoids;
-    Moids* m_otherMoids[NUM_OTHER_MOIDS]; // 他の虫
+
+	Moids* m_otherMoids[NUM_OTHER_MOIDS]; // 他の虫
 };
 
