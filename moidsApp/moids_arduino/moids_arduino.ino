@@ -395,15 +395,15 @@ void setNextSequenceData()
 
 void chooseMoidsDead()
 {
-    moidsMode = false;
-    pulseMode = false;
-    showaMode = false;
+	moidsMode = false;
+	pulseMode = false;
+	showaMode = false;
 
-    for (int i = 0; i < MOIDS_PER_UNIT; ++i)
-    {
-        analogWrite(OUTPUT_LED_PINS[i], 0);
+	for (int i = 0; i < MOIDS_PER_UNIT; ++i)
+	{
+		analogWrite(OUTPUT_LED_PINS[i], 0);
 		digitalWrite(OUTPUT_RELAY_PINS[i], 0);
-    }
+	}
 }
 
 void chooseMoidsThreshold(const int thres)
@@ -514,24 +514,24 @@ void setup()
 
 void loop()
 {
-    if (pulseMode)
-    {
+	if (pulseMode)
+	{
 		makePulse();
 		return;
-    }
-    else if (showaMode)
-    {
-      	makeShowa();
+	}
+	else if (showaMode)
+	{
+		makeShowa();
 		return;
-    }
-    else if (moidsMode)
-    {
+	}
+	else if (moidsMode)
+	{
 		for (int i = 0; i < MOIDS_PER_UNIT; ++i)
 		{
 			moids[i].loop();
 		}
 		return;
-    }
+	}
 }
 
 void makePulse()

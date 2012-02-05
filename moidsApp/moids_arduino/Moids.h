@@ -1,93 +1,92 @@
 #pragma once
 
 /** Moid Class Definition
- */	       
+ */
 class Moids
 {
 public:
-    // ctor
-    Moids();
-	
-    void init();
+	// ctor
+	Moids();
+
+	void init();
 
 	void setInputMicPin(const int pin);
-    void setOutputLEDPin(const int pin);
-    void setOutputRelayPin(const int pin);
-    void setMicThreshold(const int thres);
-    void setRelayOnTime(const int time);
-    void setWaitAfterSoundDetect(const int time);
-    // timer callback
-    void tick();
+	void setOutputLEDPin(const int pin);
+	void setOutputRelayPin(const int pin);
+	void setMicThreshold(const int thres);
+	void setRelayOnTime(const int time);
+	void setWaitAfterSoundDetect(const int time);
+	// timer callback
+	void tick();
 
-    // called from main loop
-    void loop();
-	
-    void registerOtherMoids(Moids* moids);
-	
-    void broadCastGenerateSoundState(bool start);
-	
-    void receiveOtherMoidsMessageSoundState(bool start, int relayPin);
-    
+	// called from main loop
+	void loop();
+
+	void registerOtherMoids(Moids* moids);
+
+	void broadCastGenerateSoundState(bool start);
+	void receiveOtherMoidsMessageSoundState(bool start, int relayPin);
+
 private:
-    int m_micOffset;
-    int m_micThreshold;
-    unsigned long m_relayOnTime;
-    unsigned long m_relayOnTimeCounter;
-    
-    unsigned long m_waitAfterDetect;
-    unsigned long m_waitAfterDetectCounter;
+	int m_micOffset;
+	int m_micThreshold;
+	unsigned long m_relayOnTime;
+	unsigned long m_relayOnTimeCounter;
 
-    unsigned long m_nopWait;
-    unsigned long m_nopWaitCounter;
-    
-    // enum for interactive functions
-    enum MoidsState
-    {
-		ReadAnalog = 0,
-		SoundInput,
-		GenerateSound,
-		Nop,
-		NumberOfStates,
-    };
-	
-    int m_state;
-    
-    // state functions
-    void changeState(const int state);
-    void tickReadAnalogState();
-    void tickSoundInputState();
-    void tickGenerateSoundState();
-    void tickNopState();
+	unsigned long m_waitAfterDetect;
+	unsigned long m_waitAfterDetectCounter;
 
-    // function pointer for state
-    void (Moids::*m_stateFunction)();
-    
-    volatile unsigned long m_timerCounter;
+	unsigned long m_nopWait;
+	unsigned long m_nopWaitCounter;
 
-    // pins
-    volatile int m_inputMicPin;
-    volatile int m_outputLEDPin;
-    volatile int m_outputRelayPin;
-    
-    // mic input workaround
-    void readAnalogInput();
-    bool checkInput();
+	// enum for interactive functions
+	enum MoidsState
+	{
+		ReadAnalog = 0, SoundInput, GenerateSound, Nop, NumberOfStates,
+	};
+
+	int m_state;
+
+	// state functions
+	void changeState(const int state);
+	void tickReadAnalogState();
+	void tickSoundInputState();
+	void tickGenerateSoundState();
+	void tickNopState();
+
+	// function pointer for state
+	void (Moids::*m_stateFunction)();
+
+	volatile unsigned long m_timerCounter;
+
+	// pins
+	volatile int m_inputMicPin;
+	volatile int m_outputLEDPin;
+	volatile int m_outputRelayPin;
+
+	// mic input workaround
+	void readAnalogInput();
+	bool checkInput();
 
 	static const int MIC_INPUT_ARRAY_LENGTH = 2;
-    volatile int m_micInput[2];
-    bool m_firstTimeAfterStateTransition;
-    volatile int m_dontReadCounter;
-    void makeOffset();
-    volatile bool m_detect1stTime;
-    
-    static const unsigned long COUNTER_PER_1MSEC = 8;
-    static const int LED_BRIGHTNESS_WAITING = 1;
-    static const int LED_BRIGHTNESS_INPUT_DETECTED = 2;
-    static const int LED_BRIGHTNESS_SOUND_GENERATING = 4;
+	volatile int m_micInput[2];
+	bool m_firstTimeAfterStateTransition;
+	volatile int m_dontReadCounter;
+	void makeOffset();
+	volatile bool m_detect1stTime;
 
-    static const int NUM_OTHER_MOIDS = 2;
-    volatile int m_numOtherMoids;
+	static const unsigned long COUNTER_PER_1MSEC = 8;
+	static const int LED_BRIGHTNESS_WAITING = 1;
+	static const int LED_BRIGHTNESS_INPUT_DETECTED = 2;
+	static const int LED_BRIGHTNESS_SOUND_GENERATING = 4;
 
-	Moids* m_otherMoids[NUM_OTHER_MOIDS]; // ‘¼‚Ì’Ž
+	static const int NUM_OTHER_MOIDS = 2;
+	volatile int m_numOtherMoids;
+
+	Moids* m_otherMoids[NUM_OTHER_MOIDS];
+
+	static const int sound_table_on[];
+	static const int sound_table_off[];
+	static const int sound_table_length;
 };
 
