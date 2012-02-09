@@ -28,10 +28,19 @@ public:
 	void receiveOtherMoidsMessageSoundState(bool start, int relayPin);
 
 private:
+
 	int m_micOffset;
 	int m_micThreshold;
+
 	unsigned long m_relayOnTime;
 	unsigned long m_relayOnTimeCounter;
+
+	unsigned long m_relayOffTime;
+	unsigned long m_relayOffCounter;
+
+	bool m_oscillation_high;
+	unsigned long m_oscillationCount;
+	unsigned long m_oscillatorCountMax;
 
 	unsigned long m_waitAfterDetect;
 	unsigned long m_waitAfterDetectCounter;
@@ -56,6 +65,12 @@ private:
 
 	// function pointer for state
 	void (Moids::*m_stateFunction)();
+
+	void determineSound();
+
+	void oscillate();
+
+	void toNop();
 
 	volatile unsigned long m_timerCounter;
 
@@ -85,8 +100,11 @@ private:
 
 	Moids* m_otherMoids[NUM_OTHER_MOIDS];
 
+	static const int sounding_time_total;
 	static const int sound_table_on[];
 	static const int sound_table_off[];
 	static const int sound_table_length;
+
+	bool m_needOscillation;
 };
 

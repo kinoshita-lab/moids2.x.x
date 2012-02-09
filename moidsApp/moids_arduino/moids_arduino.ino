@@ -171,18 +171,18 @@ int currentSequence = randomPulse;
 
 void timerTick()
 {
-    static unsigned int sec = 0;
-    static unsigned int moidsSec = 0;
-    sec++;
+	static unsigned int sec = 0;
+	static unsigned int moidsSec = 0;
+	sec++;
 
-    if (moidsMode)
-    {
-		if (sec >= 4167*2)
+	if (moidsMode)
+	{
+		if (sec >= 4167 * 2)
 		{
 			sec = 0;
 			moidsSec++;
 		}
-		
+
 		if (moidsSec >= *sequence_length)
 		{
 			moidsSec = 0;
@@ -191,206 +191,205 @@ void timerTick()
 			setNextSequenceData();
 			return;
 		}
-		
+
 		for (int i = 0; i < MOIDS_PER_UNIT; ++i)
 		{
 			moids[i].tick();
 		}
-		
-		return;
-    }
 
-    if (pulseMode
-		|| showaMode)
-    {
+		return;
+	}
+
+	if (pulseMode || showaMode)
+	{
 		if (sec >= *sequence_length)
-		{   
+		{
 			sec = 0;
 			sequence_length++;
 			currentSequence++;
 			setNextSequenceData();
 		}
-    }
+	}
 }
 
 void setNextSequenceData()
 {
-    while (0 == *sequence_length)
-    {
+	while (0 == *sequence_length)
+	{
 		sequence_length++;
 		currentSequence++;
-    }
-    
-    switch (currentSequence)
-    {
-    case randomPulse:
+	}
+
+	switch (currentSequence)
+	{
+	case randomPulse:
 		choosePulseSequence(0, 5);
 		break;
-    case oneThirdIs125:
+	case oneThirdIs125:
 		choosePulseSequence(33, 5);
 		break;
-    case twoThirdIs125:
+	case twoThirdIs125:
 		choosePulseSequence(66, 5);
 		break;
-    case fourFifthIs125:
+	case fourFifthIs125:
 		choosePulseSequence(80, 5);
 		break;
-    case all125:
+	case all125:
 		choosePulseSequence(100, 0);
 		break;
-    default:
+	default:
 		break;
-    }
+	}
 
-    switch (currentSequence)
-    {
-    case oneFifthIsShowa:
+	switch (currentSequence)
+	{
+	case oneFifthIsShowa:
 		chooseShowaSequence(20);
 		break;
-    case oneThirdIsShowa:
+	case oneThirdIsShowa:
 		chooseShowaSequence(33);
 		break;
-    case twoThirdIsShowa:
+	case twoThirdIsShowa:
 		chooseShowaSequence(66);
 		break;
-    case allShowa:
+	case allShowa:
 		chooseShowaSequence(100);
 		break;
-    default:
+	default:
 		break;
-    }
+	}
 
-    switch (currentSequence)
-    {
-    case showa250:
+	switch (currentSequence)
+	{
+	case showa250:
 		chooseDelayedShowa(250);
 		break;
-    case showa375:
+	case showa375:
 		chooseDelayedShowa(375);
 		break;
-    case showa500:
+	case showa500:
 		chooseDelayedShowa(500);
 		break;
-    case showa625:
+	case showa625:
 		chooseDelayedShowa(625);
-	break;
-    case showa750:
+		break;
+	case showa750:
 		chooseDelayedShowa(750);
 		break;
-    case showa875:
+	case showa875:
 		chooseDelayedShowa(875);
 		break;
-    case showa1000:
+	case showa1000:
 		chooseDelayedShowa(1000);
 		break;
-    case showa1125:
+	case showa1125:
 		chooseDelayedShowa(1125);
 		break;
-    case showa1250:
+	case showa1250:
 		chooseDelayedShowa(1250);
 		break;
-    case showa2500:
+	case showa2500:
 		chooseDelayedShowa(2500);
 		break;
-    case showa5000:
+	case showa5000:
 		chooseDelayedShowa(5000);
 		break;
-    case showa10000:
+	case showa10000:
 		chooseDelayedShowa(10000);
 		break;
-    case showa15000:
+	case showa15000:
 		chooseDelayedShowa(15000);
 		break;
-    case showa25000:
+	case showa25000:
 		chooseDelayedShowa(25000);
 		break;
-    default:
+	default:
 		break;
-    }
+	}
 
-    switch (currentSequence)
-    {
-    case showaDecay93:
+	switch (currentSequence)
+	{
+	case showaDecay93:
 		chooseShowaDecay(93);
 		break;
-    case showaDecay86:
+	case showaDecay86:
 		chooseShowaDecay(86);
 		break;
-    case showaDecay79:
+	case showaDecay79:
 		chooseShowaDecay(79);
 		break;
-    case showaDecay72:
+	case showaDecay72:
 		chooseShowaDecay(72);
 		break;
-    case showaDecay65:
+	case showaDecay65:
 		chooseShowaDecay(65);
 		break;
-    case showaDecay58:
+	case showaDecay58:
 		chooseShowaDecay(58);
 		break;
-    case showaDecay51:
+	case showaDecay51:
 		chooseShowaDecay(51);
 		break;
-    case showaDecay44:
+	case showaDecay44:
 		chooseShowaDecay(44);
 		break;
-    case showaDecay37:
+	case showaDecay37:
 		chooseShowaDecay(37);
 		break;
-    case showaDecay30:
+	case showaDecay30:
 		chooseShowaDecay(30);
 		break;
-    case showaDecay23:
+	case showaDecay23:
 		chooseShowaDecay(23);
 		break;
-    case showaDecay16:
+	case showaDecay16:
 		chooseShowaDecay(16);
 		break;
-    case showaDecay9:
+	case showaDecay9:
 		chooseShowaDecay(9);
 		break;
-    default:
+	default:
 		break;
-    }
+	}
 
-    switch (currentSequence)
-    {
-    case moids7:
+	switch (currentSequence)
+	{
+	case moids7:
 		chooseMoidsThreshold(1);
 		break;
-    case moids6:
+	case moids6:
 		chooseMoidsThreshold(2);
 		break;
-    case moids5:
+	case moids5:
 		chooseMoidsThreshold(2);
 		break;
-    case moids4:
+	case moids4:
 		chooseMoidsThreshold(2);
 		break;
-    case moids_dead5:
+	case moids_dead5:
 		chooseMoidsThreshold(5);
 		break;
-    case moids_dead6:
+	case moids_dead6:
 		chooseMoidsThreshold(6);
 		break;
-    case moids_dead7:
+	case moids_dead7:
 		chooseMoidsThreshold(7);
 		break;
-    case moids_dead8:
+	case moids_dead8:
 		chooseMoidsThreshold(8);
 		break;
-    case moids_dead9:
+	case moids_dead9:
 		chooseMoidsThreshold(9);
 		break;
-    case moids_dead10:
+	case moids_dead10:
 		chooseMoidsThreshold(10);
 		break;
-    case moids_dead:
+	case moids_dead:
 		chooseMoidsDead();
 		break;
-    default:
+	default:
 		break;
-    }
+	}
 }
 
 void chooseMoidsDead()
@@ -408,109 +407,108 @@ void chooseMoidsDead()
 
 void chooseMoidsThreshold(const int thres)
 {
-    moidsMode = true;
-    pulseMode = false;
-    showaMode = false;
+	moidsMode = true;
+	pulseMode = false;
+	showaMode = false;
 
-    MsTimer2::stop();
-    MsTimer2::set(1, timerTick);
-    MsTimer2::start();
-    
-    for (int i = 0; i < MOIDS_PER_UNIT; ++i)
-    {
-		moids[i].setRelayOnTime(*moids_on);
+	MsTimer2::stop();
+	MsTimer2::set(1, timerTick);
+	MsTimer2::start();
+
+	for (int i = 0; i < MOIDS_PER_UNIT; ++i)
+	{
+//		moids[i].setRelayOnTime(*moids_on);
 		moids[i].setWaitAfterSoundDetect(*moids_wait);
-        moids[i].setMicThreshold(thres);
-    }
+		moids[i].setMicThreshold(thres);
+	}
 }
 
 void chooseShowaDecay(int probability)
 {
-    showaProbability = probability;
+	showaProbability = probability;
 }
 
 void chooseDelayedShowa(int delayTime)
 {
-    showaMode = true;
-    pulseMode = false;
-    *showa_delay = delayTime;
+	showaMode = true;
+	pulseMode = false;
+	*showa_delay = delayTime;
 }
 
 void choosePulseSequence(int prob_to_zero, int max_seq_number)
 {
-    pulseMode = true;
-    int randomValue = random(101);
-    if (randomValue <= prob_to_zero)
-    {
+	pulseMode = true;
+	int randomValue = random(101);
+	if (randomValue <= prob_to_zero)
+	{
 		pulse_high = &pulse_high_table[0];
 		pulse_low = &pulse_low_table[0];
 		return;
-    }
-    
-    randomValue = random(max_seq_number+1);
-    pulse_high = &pulse_high_table[0] + randomValue;
-    pulse_low = &pulse_low_table[0] + randomValue;
+	}
+
+	randomValue = random(max_seq_number + 1);
+	pulse_high = &pulse_high_table[0] + randomValue;
+	pulse_low = &pulse_low_table[0] + randomValue;
 }
 
 void chooseShowaSequence(int prob_to_showa)
 {
-    int randomValue = random(101);
-    if (randomValue <=  prob_to_showa)
-    {
+	int randomValue = random(101);
+	if (randomValue <= prob_to_showa)
+	{
 		showaMode = true;
 		pulseMode = false;
 		showa_delay = &showa_delay_table[0];
-		return;	
-    }
-    showaMode = false;
-    pulseMode = true;
+		return;
+	}
+	showaMode = false;
+	pulseMode = true;
 
-    pulse_high = &pulse_high_table[0];
-    pulse_low = &pulse_low_table[0];
+	pulse_high = &pulse_high_table[0];
+	pulse_low = &pulse_low_table[0];
 }
 
 void setup()
 {
-    for (int i = 0; i < 13; i++)
-    {
+	for (int i = 0; i < 13; i++)
+	{
 		pinMode(i, OUTPUT);
-    }
-    
-    // set prescale to 16
-    sbi(ADCSRA,ADPS2) ;
-    cbi(ADCSRA,ADPS1) ;
-    cbi(ADCSRA,ADPS0) ;
+	}
 
-    randomSeed(analogRead(0));
-    
-    for (int i = 0; i < MOIDS_PER_UNIT; ++i)
-    {
-        pinMode(OUTPUT_LED_PINS[i], OUTPUT);
+	// set prescale to 16
+	sbi(ADCSRA, ADPS2);
+	cbi(ADCSRA, ADPS1);
+	cbi(ADCSRA, ADPS0);
+
+	randomSeed(analogRead(0));
+
+	for (int i = 0; i < MOIDS_PER_UNIT; ++i)
+	{
+		pinMode(OUTPUT_LED_PINS[i], OUTPUT);
 		pinMode(OUTPUT_RELAY_PINS[i], OUTPUT);
-    }
+	}
 
-    for (int i = 0; i < MOIDS_PER_UNIT; i++)
-    {
+	for (int i = 0; i < MOIDS_PER_UNIT; i++)
+	{
 		moids[i].setInputMicPin(INPUT_MIC_PINS[i]);
 		moids[i].setOutputLEDPin(OUTPUT_LED_PINS[i]);
 		moids[i].setOutputRelayPin(OUTPUT_RELAY_PINS[i]);
 		moids[i].init();
 
-	for (int j = 0; j < MOIDS_PER_UNIT; j++)
-	{
-	    if (&moids[j] != &moids[i])
-	    {
-			moids[i].registerOtherMoids(&moids[j]);
-	    }
+		for (int j = 0; j < MOIDS_PER_UNIT; j++)
+		{
+			if (&moids[j] != &moids[i])
+			{
+				moids[i].registerOtherMoids(&moids[j]);
+			}
+		}
 	}
-    }
-    
-    MsTimer2::set(4167*2, timerTick); // 1sec
-    MsTimer2::start();
 
-    setNextSequenceData();
+	MsTimer2::set(4167 * 2, timerTick); // 1sec
+	MsTimer2::start();
+
+	setNextSequenceData();
 }
-
 
 void loop()
 {
@@ -536,28 +534,28 @@ void loop()
 
 void makePulse()
 {
-    onAll();
-    _delay_us(*pulse_high);
-    offAll();
-    _delay_us(*pulse_low);
+	onAll();
+	_delay_us(*pulse_high);
+	offAll();
+	_delay_us(*pulse_low);
 }
 
 void makeShowa()
 {
-    int showaOnOffRandom = random(101);
-    if (showaOnOffRandom > showaProbability)
-    {
+	int showaOnOffRandom = random(101);
+	if (showaOnOffRandom > showaProbability)
+	{
 		_delay_us(*showa_delay);
 		return;
-    }
-    
-    int randomValue = random(3);
-    analogWrite(OUTPUT_LED_PINS[randomValue], LED_BRIGHTNESS_ON);
-    digitalWrite(OUTPUT_RELAY_PINS[randomValue], HIGH);
+	}
 
-    _delay_us(*showa_delay);
-    analogWrite(OUTPUT_LED_PINS[randomValue], LED_BRIGHTNESS_OFF);
-    digitalWrite(OUTPUT_RELAY_PINS[randomValue], LOW);
+	int randomValue = random(3);
+	analogWrite(OUTPUT_LED_PINS[randomValue], LED_BRIGHTNESS_ON);
+	digitalWrite(OUTPUT_RELAY_PINS[randomValue], HIGH);
+
+	_delay_us(*showa_delay);
+	analogWrite(OUTPUT_LED_PINS[randomValue], LED_BRIGHTNESS_OFF);
+	digitalWrite(OUTPUT_RELAY_PINS[randomValue], LOW);
 }
 
 void onAll()
