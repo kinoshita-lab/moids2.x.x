@@ -54,8 +54,6 @@ const int Moids::sound_durations[Moids::sound_table_length] =
 	1000 , 1000, 1000,
 };
 
-const int Moids::sounding_time_total = 80;
-
 Moids::Moids()
 {
 }
@@ -341,8 +339,8 @@ void Moids::determineSound()
 	m_timerCounter = 0;
 
 	// randomize sound
-	const int soundIndex = random(sound_table_length);
-	m_needOscillation = (soundIndex < 10);
+	const int soundIndex = random(sound_table_length + 1);
+	m_needOscillation = true;//(soundIndex < 0);
 
 	m_relayOnTime = sound_table_on[soundIndex];
 	m_relayOffTime = sound_table_off[soundIndex];

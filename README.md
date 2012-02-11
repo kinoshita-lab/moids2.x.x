@@ -1,5 +1,5 @@
 # About
-These files are schematics, frame designs, and source codes needed for an artwork "moids 2.0.x".
+These files are schematics, frame designs, and source codes needed for an artwork "moids 2.*.*".
 You need at least arduino(pro, nano, duemilanove, etc.) or some alternatives to run this program.
 We have confirmed this program works on Arduino-1.0 version so far.
 
