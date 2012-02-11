@@ -2,7 +2,9 @@
 #include "MsTimer2.h"// <- N.B. modified!
 #include "Moids.h"
 
-// defines for setting and clearing register bits
+/* ========================================================================
+  macros for setting and clearing register bits
+========================================================================= */
 #ifndef cbi
 #define cbi(sfr, bit) (_SFR_BYTE(sfr) &= ~_BV(bit))
 #endif
@@ -17,7 +19,6 @@ static const int MOIDS_PER_UNIT = 3;
 static const int INPUT_MIC_PINS[MOIDS_PER_UNIT]    = {1, 0, 2};
 static const int OUTPUT_LED_PINS[MOIDS_PER_UNIT]   = {6, 10, 9};
 static const int OUTPUT_RELAY_PINS[MOIDS_PER_UNIT] = {8, 7, 4};
-
 
 static const int LED_BRIGHTNESS_OFF = 1;
 static const int LED_BRIGHTNESS_ON = 4;
@@ -171,6 +172,12 @@ int currentSequence = randomPulse;
 
 void timerTick()
 {
+	for (int i = 0; i < MOIDS_PER_UNIT; ++i)
+	{
+		moids[i].tick();
+	}
+	return;
+	
 	static unsigned int sec = 0;
 	static unsigned int moidsSec = 0;
 	sec++;
@@ -417,7 +424,6 @@ void chooseMoidsThreshold(const int thres)
 
 	for (int i = 0; i < MOIDS_PER_UNIT; ++i)
 	{
-//		moids[i].setRelayOnTime(*moids_on);
 		moids[i].setWaitAfterSoundDetect(*moids_wait);
 		moids[i].setMicThreshold(thres);
 	}
@@ -504,14 +510,21 @@ void setup()
 		}
 	}
 
-	MsTimer2::set(4167 * 2, timerTick); // 1sec
+	//MsTimer2::set(4167 * 2, timerTick); // 1sec
+	MsTimer2::set(1, timerTick); // 125sec
 	MsTimer2::start();
-
-	setNextSequenceData();
+	chooseMoidsThreshold(1);
+	// setNextSequenceData();
 }
 
 void loop()
 {
+	for (int i = 0; i < MOIDS_PER_UNIT; ++i)
+	{
+		moids[i].loop();
+	}
+	return;
+	
 	if (pulseMode)
 	{
 		makePulse();

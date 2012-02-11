@@ -103,7 +103,10 @@ private:
 	static const int sounding_time_total;
 	static const int sound_table_on[];
 	static const int sound_table_off[];
+	static const int sound_durations[];
 	static const int sound_table_length;
+
+
 
 	bool m_needOscillation;
 };

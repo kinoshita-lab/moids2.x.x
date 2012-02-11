@@ -3,30 +3,55 @@
 
 const int Moids::sound_table_length = 43;
 
-const int Moids::sound_table_on[] =
+/**
+ *  relay on time.
+ *  number of cycles of 125usec timer tick
+ */
+const int Moids::sound_table_on[Moids::sound_table_length] =
 {
-    125/125 , 125/125 , 250/125 , 125/125 , 250/125,
-    125/125 , 250/125 , 250/125 , 375/125 , 500/125,
-    625/125 , 500/125 , 250/125 , 375/125 , 250/125,
-    375/125 , 500/125 , 250/125 , 375/125 , 500/125,
-    625/125 , 750/125 , 500/125 , 625/125 , 750/125,
-    875/125 , 500/125 , 875/125 , 1000/125, 500/125,
-    625/125 , 625/125 , 875/125 , 1000/125, 875/125,
-    1000/125, 1250/125, 875/125 , 1000/125, 1125/125,
-    1250/125, 1325/125, 1450/125,
+	125/125 , 125/125 , 250/125 , 125/125 , 250/125,
+	125/125 , 250/125 , 250/125 , 375/125 , 500/125,
+	625/125 , 500/125 , 250/125 , 375/125 , 250/125,
+	375/125 , 500/125 , 250/125 , 375/125 , 500/125,
+	625/125 , 750/125 , 500/125 , 625/125 , 750/125,
+	875/125 , 500/125 , 875/125 , 1000/125, 500/125,
+	625/125 , 625/125 , 875/125 , 1000/125, 875/125,
+	1000/125, 1250/125, 875/125 , 1000/125, 1125/125,
+	1250/125, 1325/125, 1450/125,
 };
 
-const int Moids::sound_table_off[] =
+/**
+ * relay off time.
+ * number of cycles of 125usec timer tick
+ */
+const int Moids::sound_table_off[Moids::sound_table_length] =
 {
-    125/125 , 250/125 , 250/125 , 375/125 , 375/125 ,
-    500/125 , 875/125 , 1125/125, 1250/125, 1250/125,
-    1375/125, 500/125 , 625/125 , 625/125 , 750/125 ,
-    750/125 , 750/125 , 875/125 , 875/125 , 875/125 ,
-    875/125 , 875/125 , 1000/125, 1000/125, 1000/125,
-    1000/125, 1125/125, 1125/125, 1125/125, 1250/125,
-    1250/125, 1325/125, 1325/125, 1325/125, 1450/125,
-    1325/125, 1325/125, 1250/125, 1250/125, 1250/125,
-    1325/125, 1450/125, 1450/125,
+	125/125 , 250/125 , 250/125 , 375/125 , 375/125 ,
+	500/125 , 875/125 , 1125/125, 1250/125, 1250/125,
+	1375/125, 500/125 , 625/125 , 625/125 , 750/125 ,
+	750/125 , 750/125 , 875/125 , 875/125 , 875/125 ,
+	875/125 , 875/125 , 1000/125, 1000/125, 1000/125,
+	1000/125, 1125/125, 1125/125, 1125/125, 1250/125,
+	1250/125, 1325/125, 1325/125, 1325/125, 1450/125,
+	1325/125, 1325/125, 1250/125, 1250/125, 1250/125,
+	1325/125, 1450/125, 1450/125,
+};
+
+/**
+ * sound drations.
+ * number of cycles of 125usec timer tick
+ */
+const int Moids::sound_durations[Moids::sound_table_length] =
+{
+	1000 , 1000, 1000, 1000, 1000,
+	1000 , 1000, 1000, 1000, 1000,
+	1000 , 1000, 1000, 1000, 1000,
+	1000 , 1000, 1000, 1000, 1000,
+	1000 , 1000, 1000, 1000, 1000,
+	1000 , 1000, 1000, 1000, 1000,
+	1000 , 1000, 1000, 1000, 1000,
+	1000 , 1000, 1000, 1000, 1000,
+	1000 , 1000, 1000,
 };
 
 const int Moids::sounding_time_total = 80;
@@ -316,18 +341,18 @@ void Moids::determineSound()
 	m_timerCounter = 0;
 
 	// randomize sound
-	const int currentRelayOnTimeIndex = random(sound_table_length);
-	m_needOscillation = (currentRelayOnTimeIndex < 10);
+	const int soundIndex = random(sound_table_length);
+	m_needOscillation = (soundIndex < 10);
 
-	m_relayOnTime = sound_table_on[currentRelayOnTimeIndex];
-	m_relayOffTime = sound_table_off[currentRelayOnTimeIndex];
+	m_relayOnTime = sound_table_on[soundIndex];
+	m_relayOffTime = sound_table_off[soundIndex];
 
 	if (m_needOscillation)
 	{
 		m_timerCounter = 0;
 		m_oscillation_high = true;
 		digitalWrite(m_outputRelayPin, HIGH);
-		m_oscillatorCountMax =  sounding_time_total / (m_relayOnTime + m_relayOffTime);
+		m_oscillatorCountMax =  sound_durations[soundIndex];
 		m_oscillationCount = 0;
 	}
 }
