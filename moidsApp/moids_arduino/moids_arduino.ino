@@ -73,6 +73,7 @@ volatile int* moids_on = &moids_on_table[0];
 
 volatile int moids_wait_table[] =
 {
+    // delay time, 1count=125usec
     375,
 };
 volatile int* moids_wait = &moids_wait_table[0];
@@ -513,7 +514,7 @@ void setup()
 	//MsTimer2::set(4167 * 2, timerTick); // 1sec
 	MsTimer2::set(1, timerTick); // 125sec
 	MsTimer2::start();
-	chooseMoidsThreshold(1);
+	chooseMoidsThreshold(2);
 	// setNextSequenceData();
 }
 
