@@ -1,8 +1,0 @@
-moids2_0.1power.cmp(部品面パターンデータ)
-moids2_0.1power.gpi（レポートファイル)
-moids2_0.1power.plc（部品面シルクデータ）
-moids2_0.1power.sol（半田面パターンデータ）
-moids2_0.1power.stc（部品面レジストデータ）
-moids2_0.1power.sts（半田面レジストデータ）
-moids2_0.1power.out（外形線データ）
-

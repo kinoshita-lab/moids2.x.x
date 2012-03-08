@@ -1,5 +1,5 @@
 # About
-These files are schematics, frame designs, and source codes needed for an artwork "moids 2.*.*".
+These files are schematics, frame designs, and source codes for an artwork "moids 2.*.*".
 You need at least arduino(pro, nano, duemilanove, etc.) or some alternatives to run this program.
 We have confirmed this program works on Arduino-1.0 version so far.
 
@@ -14,7 +14,7 @@ When you want to know more about moids, please visit our website or watch video 
 
    - git clone https://github.com/kinoshita-lab/moids-app.git
 
-2. connect some devices refer to the schematics
+2. connect some devices, referring to the schematics
 
 3. start Arduino environment, open moids_arduino.ino, verify and upload to I/O board.
 
