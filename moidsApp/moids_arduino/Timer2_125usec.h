@@ -3,7 +3,7 @@
 
 #include <avr/interrupt.h>
 
-namespace MsTimer2 {
+namespace Timer2_125usec {
 	extern unsigned long msecs;
 	extern void (*func)();
 	extern volatile unsigned long count;

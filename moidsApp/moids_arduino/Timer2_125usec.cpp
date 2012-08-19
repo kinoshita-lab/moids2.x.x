@@ -1,9 +1,9 @@
 /*
-  MsTimer2.h - Using timer2 with 1ms resolution
+  Timer2_125usec.h - Using timer2 with 1ms resolution
   Javier Valencia <javiervalencia80@gmail.com>
   
   History:
-  	11/Jun/08 - V0.3 
+  	11/Jun/08 - VM0.3
   		changes to allow working with different CPU frequencies
   		added support for ATMega128 (using timer2)
   		compatible with ATMega48/88/168/8
@@ -26,15 +26,15 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "MsTimer2.h"
+#include "Timer2_125usec.h"
 
-unsigned long MsTimer2::msecs;
-void (*MsTimer2::func)();
-volatile unsigned long MsTimer2::count;
-volatile char MsTimer2::overflowing;
-volatile unsigned int MsTimer2::tcnt2;
+unsigned long Timer2_125usec::msecs;
+void (*Timer2_125usec::func)();
+volatile unsigned long Timer2_125usec::count;
+volatile char Timer2_125usec::overflowing;
+volatile unsigned int Timer2_125usec::tcnt2;
 
-void MsTimer2::set(unsigned long ms, void (*f)()) {
+void Timer2_125usec::set(unsigned long ms, void (*f)()) {
 	float prescaler = 0.0;
 
 	TIMSK2 &= ~(1<<TOIE2);
@@ -67,7 +67,7 @@ void MsTimer2::set(unsigned long ms, void (*f)()) {
 	func = f;
 }
 
-void MsTimer2::start() {
+void Timer2_125usec::start() {
 	count = 0;
 	overflowing = 0;
 #if defined (__AVR_ATmega168__) || defined (__AVR_ATmega48__) || defined (__AVR_ATmega88__)
@@ -82,7 +82,7 @@ void MsTimer2::start() {
 #endif
 }
 
-void MsTimer2::stop() {
+void Timer2_125usec::stop() {
 #if defined (__AVR_ATmega168__) || defined (__AVR_ATmega48__) || defined (__AVR_ATmega88__)
 	TIMSK2 &= ~(1<<TOIE2);
 #elif defined (__AVR_ATmega128__)
@@ -92,7 +92,7 @@ void MsTimer2::stop() {
 #endif
 }
 
-void MsTimer2::_overflow() {
+void Timer2_125usec::_overflow() {
 	count += 1;
 	
 	if (count >= msecs && !overflowing) {
@@ -105,12 +105,12 @@ void MsTimer2::_overflow() {
 
 ISR(TIMER2_OVF_vect) {
 #if defined (__AVR_ATmega168__) || defined (__AVR_ATmega48__) || defined (__AVR_ATmega88__)
-	TCNT2 = MsTimer2::tcnt2;
+	TCNT2 = Timer2_125usec::tcnt2;
 #elif defined (__AVR_ATmega128__)
-	TCNT2 = MsTimer2::tcnt2;
+	TCNT2 = Timer2_125usec::tcnt2;
 #elif defined (__AVR_ATmega8__)
-	TCNT2 = MsTimer2::tcnt2;
+	TCNT2 = Timer2_125usec::tcnt2;
 #endif
-	MsTimer2::_overflow();
+	Timer2_125usec::_overflow();
 }
 

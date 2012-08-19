@@ -1,6 +1,9 @@
 #include "Arduino.h"
 #include "Moids.h"
 
+// 反応するときにデカすぎる場合をハネる。小さいほうが反応しやすい。最小は0。
+const int MOIDS_INPUT_TOO_BIG = 4;
+
 const int Moids::sound_table_length = 5;
 
 /**
@@ -155,7 +158,7 @@ void Moids::readAnalogInput()
 bool Moids::checkInput()
 {
 	return abs(m_micInput[0] - m_micInput[1]) > m_micThreshold
-	    && abs(m_micInput[0] - m_micInput[1]) < m_micThreshold + 4;
+	    && abs(m_micInput[0] - m_micInput[1]) < m_micThreshold + MOIDS_INPUT_TOO_BIG;
 }
 
 
@@ -341,7 +344,7 @@ void Moids::determineSound()
 
 	// randomize sound
 	const int soundIndex = random(sound_table_length + 1);
-	m_needOscillation = true;//(soundIndex < 0);
+	m_needOscillation = soundIndex < 0;
 
 	m_relayOnTime = sound_table_on[soundIndex];
 	m_relayOffTime = sound_table_off[soundIndex];

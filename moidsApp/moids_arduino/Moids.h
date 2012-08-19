@@ -1,6 +1,6 @@
 #pragma once
 
-/** Moid Class Definition
+/** A Moid Class Definition
  */
 class Moids
 {
@@ -94,6 +94,7 @@ private:
 	static const int LED_BRIGHTNESS_WAITING = 1;
 	static const int LED_BRIGHTNESS_INPUT_DETECTED = 2;
 	static const int LED_BRIGHTNESS_SOUND_GENERATING = 4;
+	static const int MOIDS_INPUT_TOO_BIG;
 
 	static const int NUM_OTHER_MOIDS = 2;
 	volatile int m_numOtherMoids;

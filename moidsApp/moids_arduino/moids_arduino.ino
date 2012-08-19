@@ -1,5 +1,5 @@
 #include <util/delay.h>
-#include "MsTimer2.h"// <- N.B. modified!
+#include "Timer2_125usec.h"
 #include "Moids.h"
 
 /* ========================================================================
@@ -173,12 +173,6 @@ int currentSequence = randomPulse;
 
 void timerTick()
 {
-	for (int i = 0; i < MOIDS_PER_UNIT; ++i)
-	{
-		moids[i].tick();
-	}
-	return;
-	
 	static unsigned int sec = 0;
 	static unsigned int moidsSec = 0;
 	sec++;
@@ -419,9 +413,9 @@ void chooseMoidsThreshold(const int thres)
 	pulseMode = false;
 	showaMode = false;
 
-	MsTimer2::stop();
-	MsTimer2::set(1, timerTick);
-	MsTimer2::start();
+	Timer2_125usec::stop();
+	Timer2_125usec::set(1, timerTick);
+	Timer2_125usec::start();
 
 	for (int i = 0; i < MOIDS_PER_UNIT; ++i)
 	{
@@ -511,21 +505,14 @@ void setup()
 		}
 	}
 
-	//MsTimer2::set(4167 * 2, timerTick); // 1sec
-	MsTimer2::set(1, timerTick); // 125sec
-	MsTimer2::start();
-	chooseMoidsThreshold(2);
-	// setNextSequenceData();
+	Timer2_125usec::set(4167*2, timerTick); // 1sec
+	Timer2_125usec::start();
+
+    setNextSequenceData();
 }
 
 void loop()
 {
-	for (int i = 0; i < MOIDS_PER_UNIT; ++i)
-	{
-		moids[i].loop();
-	}
-	return;
-	
 	if (pulseMode)
 	{
 		makePulse();
