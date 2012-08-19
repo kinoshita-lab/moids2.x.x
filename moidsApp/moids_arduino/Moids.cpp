@@ -1,11 +1,18 @@
 #include "Arduino.h"
 #include "Moids.h"
 
-// ��������Ƃ��Ƀf�J������ꍇ���n�l��B�������ق����������₷���B�ŏ���0�B
-const int MOIDS_INPUT_TOO_BIG = 4;
+// 反応するときにデカすぎる場合をハネる。値が大きい方が反応しやすい。最小は0。
+const int Moids::MOIDS_INPUT_TOO_BIG = 4;
 
+// 状態が変わった時にちょっと待つ（誤動作防止用) 最小は0。最大でも10くらい。
+const int Moids::DELAY_FOR_STATE_TRANSITION = 1;
+
+// 音が入ってきたかどうか？のチェックをちょっと厳密にする。
+const bool Moids::STRICT_CHECKING = true;
+
+
+// ここから下は基本データ
 const int Moids::sound_table_length = 5;
-
 /**
  *  relay on time.
  *  number of cycles of 125usec timer tick
@@ -13,14 +20,6 @@ const int Moids::sound_table_length = 5;
 const int Moids::sound_table_on[] =
 {
 	125/125 , 125/125 , 250/125 , 125/125 , 375/125,
-	/*125/125 , //250/125 , 250/125 , 375/125 , 500/125,
-	//625/125 , //500/125 , 250/125 , 375/125 , 250/125,
-	//375/125 , //500/125 , 250/125 , 375/125 , 500/125,
-	625/125 , 750/125 , 500/125 , 625/125 , 750/125,
-	875/125 , 500/125 , 875/125 , 1000/125, 500/125,
-	625/125 , 625/125 , 875/125 , 1000/125, 875/125,*/
-	//1000/125, 1250/125, 875/125 , 1000/125, 1125/125,
-	//1250/125, //1325/125, 1450/125,
 };
 
 /**
@@ -30,14 +29,6 @@ const int Moids::sound_table_on[] =
 const int Moids::sound_table_off[] =
 {
 	125/125 , 250/125 , 250/125 , 500/125 , 375/125 ,
-	/*500/125 , //875/125 , 1125/125, 1250/125, 1250/125,
-	1375/125, //500/125 , 625/125 , 625/125 , 750/125 ,
-	750/125 , //750/125 , 875/125 , 875/125 , 875/125 ,
-	875/125 , 875/125 , 1000/125, 1000/125, 1000/125,
-	1000/125, 1125/125, 1125/125, 1125/125, 1250/125,
-	1250/125, 1325/125, 1325/125, 1325/125, 1450/125,*/
-	//1375/125, 1375/125, 1250/125, 1250/125, 1250/125,
-	//1325/125, //1450/125, 1450/125,
 };
 
 /**
@@ -47,14 +38,6 @@ const int Moids::sound_table_off[] =
 const int Moids::sound_durations[] =
 {
 	150, 150, 150, 150, 150,
-	/*150, 150, 150, 150, 150,
-	100, 100, 100, 100, 100,
-	10, 10, 10, 10, 10,
-	10, 10, 10, 10, 10,
-	10, 10, 10, 10, 10,
-	1, 1, 1, 1, 1,
-	1, 1, 1, 1, 1,
-	1, 1, 1,*/
 };
 
 
@@ -151,7 +134,16 @@ void Moids::readAnalogInput()
 
 	if (changed)
 	{
-		changeState(SoundInput);
+		if (STRICT_CHECKING) {
+			// double checking
+			m_micInput[0] = analogRead(m_inputMicPin) - m_micOffset;
+			changed = checkInput();
+			m_micInput[1] = m_micInput[0];
+		}
+
+		if (changed) {
+			changeState(SoundInput);
+		}
 	}
 }
 
@@ -291,6 +283,10 @@ void Moids::changeState(const int state)
 		break;
 	default:
 		break;
+	}
+
+	if (DELAY_FOR_STATE_TRANSITION) {
+		delay(DELAY_FOR_STATE_TRANSITION);
 	}
 }
 

@@ -15,6 +15,7 @@
 /* ========================================================================
   CONSTANTS AND PIN ASSIGNS
 ========================================================================= */
+static const int ONE_SEC_COUNT = 4167 * 2; // 125usecのカウント時の1秒の長さ
 static const int MOIDS_PER_UNIT = 3;
 static const int INPUT_MIC_PINS[MOIDS_PER_UNIT]    = {1, 0, 2};
 static const int OUTPUT_LED_PINS[MOIDS_PER_UNIT]   = {6, 10, 9};
@@ -179,7 +180,7 @@ void timerTick()
 
 	if (moidsMode)
 	{
-		if (sec >= 4167 * 2)
+		if (sec >= ONE_SEC_COUNT)
 		{
 			sec = 0;
 			moidsSec++;
@@ -505,8 +506,10 @@ void setup()
 		}
 	}
 
-	Timer2_125usec::set(4167*2, timerTick); // 1sec
+	cli();
+	Timer2_125usec::set(ONE_SEC_COUNT, timerTick); // 1sec
 	Timer2_125usec::start();
+	sei();
 
     setNextSequenceData();
 }

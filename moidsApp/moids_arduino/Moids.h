@@ -95,6 +95,8 @@ private:
 	static const int LED_BRIGHTNESS_INPUT_DETECTED = 2;
 	static const int LED_BRIGHTNESS_SOUND_GENERATING = 4;
 	static const int MOIDS_INPUT_TOO_BIG;
+	static const int DELAY_FOR_STATE_TRANSITION;
+	static const bool STRICT_CHECKING;
 
 	static const int NUM_OTHER_MOIDS = 2;
 	volatile int m_numOtherMoids;
