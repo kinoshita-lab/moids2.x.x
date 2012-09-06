@@ -8,7 +8,7 @@ const int Moids::MOIDS_INPUT_TOO_BIG = 4;
 const int Moids::DELAY_FOR_STATE_TRANSITION = 1;
 
 // 音が入ってきたかどうか？のチェックをちょっと厳密にする。
-const bool Moids::STRICT_CHECKING = true;
+const bool Moids::STRICT_CHECKING = false;
 
 
 // ここから下は基本データ
