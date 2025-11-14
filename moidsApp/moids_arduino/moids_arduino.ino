@@ -1,7 +1,14 @@
+
 #include <util/delay.h>
 #include "Timer2_125usec.h"
 #include "Moids.h"
 
+void delay_us(int d)
+{
+	for (auto i = 0; i < d; ++i) {
+		_delay_us(1);
+	}
+}
 /* ========================================================================
   macros for setting and clearing register bits
 ========================================================================= */
@@ -539,9 +546,9 @@ void loop()
 void makePulse()
 {
 	onAll();
-	_delay_us(*pulse_high);
+	delay_us(*pulse_high);
 	offAll();
-	_delay_us(*pulse_low);
+	delay_us(*pulse_low);
 }
 
 void makeShowa()
@@ -549,7 +556,7 @@ void makeShowa()
 	int showaOnOffRandom = random(101);
 	if (showaOnOffRandom > showaProbability)
 	{
-		_delay_us(*showa_delay);
+		delay_us(*showa_delay);
 		return;
 	}
 
@@ -557,7 +564,7 @@ void makeShowa()
 	analogWrite(OUTPUT_LED_PINS[randomValue], LED_BRIGHTNESS_ON);
 	digitalWrite(OUTPUT_RELAY_PINS[randomValue], HIGH);
 
-	_delay_us(*showa_delay);
+	delay_us(*showa_delay);
 	analogWrite(OUTPUT_LED_PINS[randomValue], LED_BRIGHTNESS_OFF);
 	digitalWrite(OUTPUT_RELAY_PINS[randomValue], LOW);
 }
