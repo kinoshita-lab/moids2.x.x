@@ -1,11 +1,12 @@
 
 #include <util/delay.h>
+#include <stdint.h>
 #include "Timer2_125usec.h"
 #include "Moids.h"
 
-void delay_us(int d)
+void delay_us(const uint32_t d)
 {
-	for (auto i = 0; i < d; ++i) {
+	for (uint32_t i = 0u; i < d; ++i) {
 		_delay_us(1);
 	}
 }
@@ -495,6 +496,24 @@ void setup()
 	{
 		pinMode(OUTPUT_LED_PINS[i], OUTPUT);
 		pinMode(OUTPUT_RELAY_PINS[i], OUTPUT);
+	}
+
+	while (true)
+	{
+		digitalWrite(OUTPUT_LED_PINS[0], HIGH);
+		digitalWrite(OUTPUT_LED_PINS[1], HIGH);
+		digitalWrite(OUTPUT_LED_PINS[2], HIGH);
+		digitalWrite(OUTPUT_RELAY_PINS[0], HIGH);
+		digitalWrite(OUTPUT_RELAY_PINS[1], HIGH);
+		digitalWrite(OUTPUT_RELAY_PINS[2], HIGH);
+		delay_us(1);
+		digitalWrite(OUTPUT_LED_PINS[0], LOW);
+		digitalWrite(OUTPUT_LED_PINS[1], LOW);
+		digitalWrite(OUTPUT_LED_PINS[2], LOW);
+		digitalWrite(OUTPUT_RELAY_PINS[0], LOW);
+		digitalWrite(OUTPUT_RELAY_PINS[1], LOW);
+		digitalWrite(OUTPUT_RELAY_PINS[2], LOW);
+		delay_us(1);
 	}
 
 	for (int i = 0; i < MOIDS_PER_UNIT; i++)
