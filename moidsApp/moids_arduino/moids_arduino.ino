@@ -23,7 +23,7 @@ void delay_us(const uint32_t d)
 /* ========================================================================
   CONSTANTS AND PIN ASSIGNS
 ========================================================================= */
-static const int ONE_SEC_COUNT = 4167 * 2; // 125usecのカウント時の1秒の長さ
+static const int ONE_SEC_COUNT = 8000; // 125usecのカウント時の1秒の長さ
 static const int MOIDS_PER_UNIT = 3;
 static const int INPUT_MIC_PINS[MOIDS_PER_UNIT]    = {1, 0, 2};
 static const int OUTPUT_LED_PINS[MOIDS_PER_UNIT]   = {6, 10, 9};
@@ -180,6 +180,7 @@ enum SequenceName
 };
 int currentSequence = randomPulse;
 
+bool led_state = false;
 void timerTick()
 {
 	static unsigned int sec = 0;
@@ -484,7 +485,6 @@ void setup()
 	{
 		pinMode(i, OUTPUT);
 	}
-
 	// set prescale to 16
 	sbi(ADCSRA, ADPS2);
 	cbi(ADCSRA, ADPS1);
@@ -497,24 +497,41 @@ void setup()
 		pinMode(OUTPUT_LED_PINS[i], OUTPUT);
 		pinMode(OUTPUT_RELAY_PINS[i], OUTPUT);
 	}
+#if 0 // keep test codes
+	// test: get average input to detect zero level
+	float averages[MOIDS_PER_UNIT] = {0, 0, 0};
 
+	auto update_average = [&](int index, const int iter) {
+		uint32_t total = 0;
+		for (int sample = 0; sample < iter; ++sample)
+		{
+			total += analogRead(INPUT_MIC_PINS[index]);
+		}
+		float average = total / iter;
+		averages[index] = static_cast<int>(average);
+
+	};
+
+	for (int i = 0; i < MOIDS_PER_UNIT; ++i)
+	{
+		update_average(i, 1000);
+	}
+
+
+	// 0: off, 1: on 2: analog
+	analogWrite(OUTPUT_LED_PINS[1], 0);
+	analogWrite(OUTPUT_LED_PINS[2], 0);
+
+	const auto target = 2;
 	while (true)
 	{
-		digitalWrite(OUTPUT_LED_PINS[0], HIGH);
-		digitalWrite(OUTPUT_LED_PINS[1], HIGH);
-		digitalWrite(OUTPUT_LED_PINS[2], HIGH);
-		digitalWrite(OUTPUT_RELAY_PINS[0], HIGH);
-		digitalWrite(OUTPUT_RELAY_PINS[1], HIGH);
-		digitalWrite(OUTPUT_RELAY_PINS[2], HIGH);
-		delay_us(1);
-		digitalWrite(OUTPUT_LED_PINS[0], LOW);
-		digitalWrite(OUTPUT_LED_PINS[1], LOW);
-		digitalWrite(OUTPUT_LED_PINS[2], LOW);
-		digitalWrite(OUTPUT_RELAY_PINS[0], LOW);
-		digitalWrite(OUTPUT_RELAY_PINS[1], LOW);
-		digitalWrite(OUTPUT_RELAY_PINS[2], LOW);
-		delay_us(1);
+		const auto read = abs(analogRead(INPUT_MIC_PINS[target]) - (int)averages[target]) >> 2;
+
+		analogWrite(OUTPUT_LED_PINS[target], read);
+
+		update_average(target, 10);
 	}
+#endif
 
 	for (int i = 0; i < MOIDS_PER_UNIT; i++)
 	{
