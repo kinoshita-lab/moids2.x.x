@@ -423,6 +423,7 @@ void chooseMoidsThreshold(const int thres)
 	pulseMode = false;
 	showaMode = false;
 
+	cli();
 	Timer2_125usec::stop();
 	Timer2_125usec::set(1, timerTick);
 	Timer2_125usec::start();
