@@ -149,8 +149,11 @@ void Moids::readAnalogInput()
 
 bool Moids::checkInput()
 {
-	return abs(m_micInput[0] - m_micInput[1]) > m_micThreshold
+	return abs(m_micInput[0] - m_micInput[1]) > m_micThreshold;
+
+/*	return abs(m_micInput[0] - m_micInput[1]) > m_micThreshold
 	    && abs(m_micInput[0] - m_micInput[1]) < m_micThreshold + MOIDS_INPUT_TOO_BIG;
+		*/
 }
 
 
@@ -316,6 +319,7 @@ void Moids::registerOtherMoids(Moids* moids)
 
 void Moids::broadCastGenerateSoundState(bool start)
 {
+	return;
 	for (int i = 0; i < m_numOtherMoids; i++)
 	{
 		m_otherMoids[i]->receiveOtherMoidsMessageSoundState(start, m_outputRelayPin);
@@ -324,6 +328,7 @@ void Moids::broadCastGenerateSoundState(bool start)
 
 void Moids::receiveOtherMoidsMessageSoundState(bool start, int relayPin)
 {
+	return;
 	if (start)
 	{
 		m_dontReadCounter++;
