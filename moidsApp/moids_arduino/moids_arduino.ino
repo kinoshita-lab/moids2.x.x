@@ -178,7 +178,7 @@ enum SequenceName
 	// end of sequense
 	moids_dead,
 };
-int currentSequence = randomPulse;
+int currentSequence = showaDecay9;
 
 bool led_state = false;
 void timerTick()
