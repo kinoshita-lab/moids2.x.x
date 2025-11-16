@@ -106,7 +106,6 @@ volatile int sequence_length_table[] =
 };
 
 
-volatile int* sequence_length = &sequence_length_table[0];
 
 bool pulseMode = true;
 bool showaMode = false;
@@ -179,6 +178,7 @@ enum SequenceName
 	moids_dead,
 };
 int currentSequence = showaDecay9;
+volatile int* sequence_length = &sequence_length_table[moids7];
 
 bool led_state = false;
 void timerTick()
