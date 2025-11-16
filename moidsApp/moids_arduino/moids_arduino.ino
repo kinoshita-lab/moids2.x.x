@@ -497,41 +497,6 @@ void setup()
 		pinMode(OUTPUT_LED_PINS[i], OUTPUT);
 		pinMode(OUTPUT_RELAY_PINS[i], OUTPUT);
 	}
-#if 0 // keep test codes
-	// test: get average input to detect zero level
-	float averages[MOIDS_PER_UNIT] = {0, 0, 0};
-
-	auto update_average = [&](int index, const int iter) {
-		uint32_t total = 0;
-		for (int sample = 0; sample < iter; ++sample)
-		{
-			total += analogRead(INPUT_MIC_PINS[index]);
-		}
-		float average = total / iter;
-		averages[index] = static_cast<int>(average);
-
-	};
-
-	for (int i = 0; i < MOIDS_PER_UNIT; ++i)
-	{
-		update_average(i, 1000);
-	}
-
-
-	// 0: off, 1: on 2: analog
-	analogWrite(OUTPUT_LED_PINS[1], 0);
-	analogWrite(OUTPUT_LED_PINS[2], 0);
-
-	const auto target = 2;
-	while (true)
-	{
-		const auto read = abs(analogRead(INPUT_MIC_PINS[target]) - (int)averages[target]) >> 2;
-
-		analogWrite(OUTPUT_LED_PINS[target], read);
-
-		update_average(target, 10);
-	}
-#endif
 
 	for (int i = 0; i < MOIDS_PER_UNIT; i++)
 	{
