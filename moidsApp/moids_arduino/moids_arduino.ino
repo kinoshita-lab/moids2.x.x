@@ -30,7 +30,7 @@ static const int OUTPUT_LED_PINS[MOIDS_PER_UNIT]   = {6, 10, 9};
 static const int OUTPUT_RELAY_PINS[MOIDS_PER_UNIT] = {8, 7, 4};
 
 static const int LED_BRIGHTNESS_OFF = 1;
-static const int LED_BRIGHTNESS_ON = 4;
+static const int LED_BRIGHTNESS_ON = 200;
 
 // The Moids!
 Moids moids[MOIDS_PER_UNIT];
@@ -204,7 +204,7 @@ void timerTick()
 			return;
 		}
 
-		for (int i = 0; i < MOIDS_PER_UNIT; ++i)
+		for (int i = 0; i < 1; ++i)
 		{
 			moids[i].tick();
 		}
@@ -410,7 +410,7 @@ void chooseMoidsDead()
 	pulseMode = false;
 	showaMode = false;
 
-	for (int i = 0; i < MOIDS_PER_UNIT; ++i)
+	for (int i = 0; i < 1; ++i)
 	{
 		analogWrite(OUTPUT_LED_PINS[i], 0);
 		digitalWrite(OUTPUT_RELAY_PINS[i], 0);
@@ -428,7 +428,7 @@ void chooseMoidsThreshold(const int thres)
 	Timer2_125usec::set(1, timerTick);
 	Timer2_125usec::start();
 
-	for (int i = 0; i < MOIDS_PER_UNIT; ++i)
+	for (int i = 0; i < 1; ++i)
 	{
 		moids[i].setWaitAfterSoundDetect(*moids_wait);
 		moids[i].setMicThreshold(thres);
@@ -493,20 +493,20 @@ void setup()
 
 	randomSeed(analogRead(0));
 
-	for (int i = 0; i < MOIDS_PER_UNIT; ++i)
+	for (int i = 0; i < 1; ++i)
 	{
 		pinMode(OUTPUT_LED_PINS[i], OUTPUT);
 		pinMode(OUTPUT_RELAY_PINS[i], OUTPUT);
 	}
 
-	for (int i = 0; i < MOIDS_PER_UNIT; i++)
+	for (int i = 0; i < 1; i++)
 	{
 		moids[i].setInputMicPin(INPUT_MIC_PINS[i]);
 		moids[i].setOutputLEDPin(OUTPUT_LED_PINS[i]);
 		moids[i].setOutputRelayPin(OUTPUT_RELAY_PINS[i]);
 		moids[i].init();
 
-		for (int j = 0; j < MOIDS_PER_UNIT; j++)
+		for (int j = 0; j < 1; j++)
 		{
 			if (&moids[j] != &moids[i])
 			{
@@ -537,7 +537,7 @@ void loop()
 	}
 	else if (moidsMode)
 	{
-		for (int i = 0; i < MOIDS_PER_UNIT; ++i)
+		for (int i = 0; i < 1; ++i)
 		{
 			moids[i].loop();
 		}
@@ -573,7 +573,7 @@ void makeShowa()
 
 void onAll()
 {
-	for (int i = 0; i < MOIDS_PER_UNIT; ++i)
+	for (int i = 0; i < 1; ++i)
 	{
 		digitalWrite(OUTPUT_RELAY_PINS[i], HIGH);
 		analogWrite(OUTPUT_LED_PINS[i], LED_BRIGHTNESS_ON);
@@ -582,7 +582,7 @@ void onAll()
 
 void offAll()
 {
-	for (int i = 0; i < MOIDS_PER_UNIT; ++i)
+	for (int i = 0; i < 1; ++i)
 	{
 		digitalWrite(OUTPUT_RELAY_PINS[i], LOW);
 		analogWrite(OUTPUT_LED_PINS[i], LED_BRIGHTNESS_OFF);

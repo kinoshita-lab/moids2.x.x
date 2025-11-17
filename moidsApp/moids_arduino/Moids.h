@@ -68,8 +68,6 @@ private:
 
 	void determineSound();
 
-	void oscillate();
-
 	void toNop();
 
 	volatile unsigned long m_timerCounter;
@@ -88,12 +86,17 @@ private:
 	bool m_firstTimeAfterStateTransition;
 	volatile int m_dontReadCounter;
 	void makeOffset();
-	volatile bool m_detect1stTime;
 
 	static const unsigned long COUNTER_PER_1MSEC = 8;
+#if 0
 	static const int LED_BRIGHTNESS_WAITING = 1;
 	static const int LED_BRIGHTNESS_INPUT_DETECTED = 2;
 	static const int LED_BRIGHTNESS_SOUND_GENERATING = 4;
+#endif
+	static const int LED_BRIGHTNESS_WAITING = 1;
+	static const int LED_BRIGHTNESS_INPUT_DETECTED = 200;
+	static const int LED_BRIGHTNESS_SOUND_GENERATING = 200;
+
 	static const int MOIDS_INPUT_TOO_BIG;
 	static const int DELAY_FOR_STATE_TRANSITION;
 	static const bool STRICT_CHECKING;

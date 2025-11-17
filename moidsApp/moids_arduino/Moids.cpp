@@ -90,7 +90,7 @@ void Moids::loop() {
 
 void Moids::readAnalogInput() {
   if (m_dontReadCounter) {
-    return;
+  //  return;
   }
 
   if (m_firstTimeAfterStateTransition) {
@@ -111,16 +111,7 @@ void Moids::readAnalogInput() {
   m_micInput[1] = m_micInput[0];
 
   if (changed) {
-    if (STRICT_CHECKING) {
-      // double checking
-      m_micInput[0] = analogRead(m_inputMicPin) - m_micOffset;
-      changed = checkInput();
-      m_micInput[1] = m_micInput[0];
-    }
-
-    if (changed) {
       changeState(SoundInput);
-    }
   }
 }
 
@@ -171,11 +162,6 @@ void Moids::tickSoundInputState() {
 }
 
 void Moids::tickGenerateSoundState() {
-  if (m_needOscillation) {
-    oscillate();
-    return;
-  }
-
   m_relayOnTimeCounter++;
 
   if (m_relayOnTime > m_relayOnTimeCounter) {
@@ -185,33 +171,7 @@ void Moids::tickGenerateSoundState() {
   toNop();
 }
 
-void Moids::oscillate() {
-  m_timerCounter++;
 
-  if (m_oscillation_high) {
-    if (m_timerCounter > m_relayOnTime) {
-      m_timerCounter = 0;
-      digitalWrite(m_outputRelayPin, LOW);
-      m_oscillation_high = false;
-    }
-
-    return;
-  }
-
-  if (m_timerCounter > m_relayOffTime) {
-    m_oscillationCount++;
-
-    if (m_oscillationCount > m_oscillatorCountMax) {
-      m_timerCounter = 0;
-      toNop();
-      return;
-    }
-
-    m_timerCounter = 0;
-    digitalWrite(m_outputRelayPin, HIGH);
-    m_oscillation_high = true;
-  }
-}
 
 void Moids::toNop() {
   digitalWrite(m_outputRelayPin, LOW);
@@ -225,7 +185,6 @@ void Moids::changeState(const int state) {
 
   switch (m_state) {
   case ReadAnalog:
-    m_detect1stTime = false;
     m_firstTimeAfterStateTransition = true;
     m_stateFunction = &Moids::tickReadAnalogState;
     analogWrite(m_outputLEDPin, LED_BRIGHTNESS_WAITING);
@@ -298,14 +257,5 @@ void Moids::determineSound() {
   m_relayOnTime = sound_table_on[soundIndex];
   m_relayOffTime = sound_table_off[soundIndex];
 
-  m_needOscillation =
-      soundIndex < 0; // TODO: check this condition never be true?
-
-  if (m_needOscillation) {
-    m_timerCounter = 0;
-    m_oscillation_high = true;
-    digitalWrite(m_outputRelayPin, HIGH);
-    m_oscillatorCountMax = sound_durations[soundIndex];
-    m_oscillationCount = 0;
-  }
+  return;
 }
