@@ -110,6 +110,7 @@ void Moids::readAnalogInput() {
   bool changed = checkInput();
   m_micInput[1] = m_micInput[0];
 
+  analogWrite(m_outputLEDPin, m_micInput[0] >> 3);
   if (changed) {
       changeState(SoundInput);
   }
@@ -158,7 +159,8 @@ void Moids::tickSoundInputState() {
 
   digitalWrite(m_outputRelayPin, HIGH);
   analogWrite(m_outputLEDPin, LED_BRIGHTNESS_SOUND_GENERATING);
-  changeState(GenerateSound);
+  //changeState(GenerateSound);
+  changeState(ReadAnalog);
 }
 
 void Moids::tickGenerateSoundState() {

@@ -425,7 +425,7 @@ void chooseMoidsThreshold(const int thres)
 
 	cli();
 	Timer2_125usec::stop();
-	Timer2_125usec::set(1, timerTick);
+	Timer2_125usec::set(10, timerTick);
 	Timer2_125usec::start();
 
 	for (int i = 0; i < 1; ++i)
