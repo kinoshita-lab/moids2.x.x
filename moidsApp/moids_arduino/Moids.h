@@ -115,6 +115,6 @@ private:
 	static const int sound_durations[];
 	static const int sound_table_length;	
 
-	static constexpr int SOUND_READ_PERIOD = 125; // in usec = Fs = 8kHz
+	static constexpr int SOUND_READ_PERIOD = 100; // in usec = Fs = 8kHz
 };
 

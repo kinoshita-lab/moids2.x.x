@@ -7,7 +7,7 @@
 const int Moids::MOIDS_INPUT_TOO_BIG = 4;
 
 // 状態が変わった時にちょっと待つ（誤動作防止用) 最小は0。最大でも10くらい。
-const int Moids::DELAY_FOR_STATE_TRANSITION = 1;
+const int Moids::DELAY_FOR_STATE_TRANSITION = 0;
 
 // 音が入ってきたかどうか？のチェックをちょっと厳密にする。
 const bool Moids::STRICT_CHECKING = false;
@@ -102,7 +102,7 @@ void Moids::loop() {
 
 void Moids::readAnalogInput() {
   if (m_dontReadCounter) {
-    return;
+   // return;
   }
 
   if (m_firstTimeAfterStateTransition) {
@@ -112,7 +112,7 @@ void Moids::readAnalogInput() {
 
   // read Inputs
   m_micInput[0] = analogRead(m_inputMicPin) - m_micOffset;
-  delayMicroseconds(SOUND_READ_PERIOD);
+  //delayMicroseconds(SOUND_READ_PERIOD);
   m_micInput[1] = analogRead(m_inputMicPin) - m_micOffset;
 
   // check threshold
@@ -125,9 +125,11 @@ void Moids::readAnalogInput() {
 
 bool Moids::checkInput() {
 
-  return abs(m_micInput[0] - m_micInput[1]) > m_micThreshold &&
+  return abs(m_micInput[0] - m_micInput[1]) > m_micThreshold;
+
+/*   return abs(m_micInput[0] - m_micInput[1]) > m_micThreshold &&
          abs(m_micInput[0] - m_micInput[1]) <
-             m_micThreshold + MOIDS_INPUT_TOO_BIG;
+             m_micThreshold + MOIDS_INPUT_TOO_BIG; */
 }
 
 // tick from MsTimer2, assuming tick cycle is 125 usec
@@ -258,7 +260,7 @@ void Moids::determineSound() {
   // randomize sound
   const int soundIndex = random(sound_table_length);
 
-  m_relayOnTime = sound_table_on[soundIndex];
+  m_relayOnTime = 16 * sound_table_on[soundIndex];
   m_relayOffTime = sound_table_off[soundIndex];
 
   return;

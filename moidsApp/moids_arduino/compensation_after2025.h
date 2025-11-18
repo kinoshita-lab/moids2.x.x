@@ -4,7 +4,7 @@
 
 #include <Arduino.h>
 
-constexpr int extra_delay_us = 142; // Adjusted delay to compensate for timing changes for new version of Arduino (faster digitalWrite)
+constexpr int extra_delay_us = 47; // Adjusted delay to compensate for timing changes for new version of Arduino (faster digitalWrite)
 
 inline void digitalWrite_with_delay_compensation(int pin, int value)
 {

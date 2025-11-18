@@ -206,11 +206,6 @@ void timerTick()
 			return;
 		}
 
-		for (int i = 0; i < MOIDS_PER_UNIT; ++i)
-		{
-			//moids[i].tick();
-		}
-
 		return;
 	}
 
@@ -437,7 +432,7 @@ void chooseMoidsThreshold(const int thres)
 		moids[i].resetFakeTimerCounter();
 	}
 
-	Timer2_125usec::set(10, timerTick);
+	Timer2_125usec::set(1, timerTick);
 	Timer2_125usec::start();
 	sei();
 }
@@ -494,9 +489,9 @@ void setup()
 		pinMode(i, OUTPUT);
 	}
 	// set ADC prescale to 16(make it faster)
-	sbi(ADCSRA, ADPS2);
-	cbi(ADCSRA, ADPS1);
-	cbi(ADCSRA, ADPS0);
+	//sbi(ADCSRA, ADPS2);
+	//cbi(ADCSRA, ADPS1);
+	//cbi(ADCSRA, ADPS0);
 
 	randomSeed(analogRead(0));
 
