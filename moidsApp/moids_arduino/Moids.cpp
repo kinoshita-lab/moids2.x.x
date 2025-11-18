@@ -1,12 +1,13 @@
+#include <stdint.h>
 #include "Moids.h"
 #include "Arduino.h"
-
+#include "compensation_after2025.h"
 
 // 反応するときにデカすぎる場合をハネる。値が大きい方が反応しやすい。最小は0。
 const int Moids::MOIDS_INPUT_TOO_BIG = 4;
 
 // 状態が変わった時にちょっと待つ（誤動作防止用) 最小は0。最大でも10くらい。
-const int Moids::DELAY_FOR_STATE_TRANSITION = 0;
+const int Moids::DELAY_FOR_STATE_TRANSITION = 1;
 
 // 音が入ってきたかどうか？のチェックをちょっと厳密にする。
 const bool Moids::STRICT_CHECKING = false;
@@ -78,19 +79,30 @@ void Moids::setMicThreshold(const int thres) { m_micThreshold = thres; }
 void Moids::setRelayOnTime(const int time) { m_relayOnTime = time; }
 
 void Moids::setWaitAfterSoundDetect(const int time) {
-  m_waitAfterDetect = 0;
-  // m_waitAfterDetect = time;
+  m_waitAfterDetect = time;
 }
 
 void Moids::loop() {
   if (ReadAnalog == m_state) {
     readAnalogInput();
   }
+
+  const uint32_t now = micros();
+  const uint32_t delta = now - m_lastMicros;
+
+  uint32_t count = delta / MOIDS_TIMER_TICK_MICROS;
+
+  if (count) {
+    for (uint32_t i = 0; i < count; ++i) {
+      tick();
+    }
+    m_lastMicros = now;
+  }
 }
 
 void Moids::readAnalogInput() {
   if (m_dontReadCounter) {
-  //  return;
+    return;
   }
 
   if (m_firstTimeAfterStateTransition) {
@@ -110,19 +122,16 @@ void Moids::readAnalogInput() {
   bool changed = checkInput();
   m_micInput[1] = m_micInput[0];
 
-  analogWrite(m_outputLEDPin, m_micInput[0] >> 3);
   if (changed) {
-      changeState(SoundInput);
+    changeState(SoundInput);
   }
 }
 
 bool Moids::checkInput() {
-  return abs(m_micInput[0] - m_micInput[1]) > m_micThreshold;
 
-  /*	return abs(m_micInput[0] - m_micInput[1]) > m_micThreshold
-              && abs(m_micInput[0] - m_micInput[1]) < m_micThreshold +
-     MOIDS_INPUT_TOO_BIG;
-                  */
+  return abs(m_micInput[0] - m_micInput[1]) > m_micThreshold &&
+         abs(m_micInput[0] - m_micInput[1]) <
+             m_micThreshold + MOIDS_INPUT_TOO_BIG;
 }
 
 // tick from MsTimer2, assuming tick cycle is 125 usec
@@ -157,10 +166,9 @@ void Moids::tickSoundInputState() {
 
   m_waitAfterDetectCounter = 0;
 
-  digitalWrite(m_outputRelayPin, HIGH);
+  digitalWrite_with_delay_compensation(m_outputRelayPin, HIGH);
   analogWrite(m_outputLEDPin, LED_BRIGHTNESS_SOUND_GENERATING);
-  //changeState(GenerateSound);
-  changeState(ReadAnalog);
+  changeState(GenerateSound);
 }
 
 void Moids::tickGenerateSoundState() {
@@ -173,16 +181,15 @@ void Moids::tickGenerateSoundState() {
   toNop();
 }
 
-
-
 void Moids::toNop() {
-  digitalWrite(m_outputRelayPin, LOW);
+  digitalWrite_with_delay_compensation(m_outputRelayPin, LOW);
   m_relayOnTimeCounter = 0;
   analogWrite(m_outputLEDPin, 0);
   changeState(Nop);
 }
 
 void Moids::changeState(const int state) {
+  cli();
   m_state = state;
 
   switch (m_state) {
@@ -207,6 +214,7 @@ void Moids::changeState(const int state) {
   default:
     break;
   }
+  sei();
 
   if (DELAY_FOR_STATE_TRANSITION) {
     delay(DELAY_FOR_STATE_TRANSITION);
@@ -234,7 +242,6 @@ void Moids::registerOtherMoids(Moids *moids) {
 }
 
 void Moids::broadCastGenerateSoundState(bool start) {
-  return;
   for (int i = 0; i < m_numOtherMoids; i++) {
     m_otherMoids[i]->receiveOtherMoidsMessageSoundState(start,
                                                         m_outputRelayPin);
@@ -242,7 +249,6 @@ void Moids::broadCastGenerateSoundState(bool start) {
 }
 
 void Moids::receiveOtherMoidsMessageSoundState(bool start, int relayPin) {
-  return;
   if (start) {
     m_dontReadCounter++;
   } else {

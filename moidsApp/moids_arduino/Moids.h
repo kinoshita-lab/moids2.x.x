@@ -1,5 +1,5 @@
 #pragma once
-
+#include "Arduino.h"
 /** A Moid Class Definition
  */
 class Moids
@@ -26,6 +26,7 @@ public:
 
 	void broadCastGenerateSoundState(bool start);
 	void receiveOtherMoidsMessageSoundState(bool start, int relayPin);
+	void resetFakeTimerCounter() { m_lastMicros = micros(); }
 
 private:
 
@@ -54,6 +55,10 @@ private:
 		ReadAnalog = 0, SoundInput, GenerateSound, Nop, NumberOfStates,
 	};
 
+
+	static const uint32_t MOIDS_TIMER_TICK_MICROS = 125;
+
+
 	int m_state;
 
 	// state functions
@@ -72,6 +77,8 @@ private:
 
 	volatile unsigned long m_timerCounter;
 
+	uint32_t m_lastMicros;
+
 	// pins
 	volatile int m_inputMicPin;
 	volatile int m_outputLEDPin;
@@ -88,14 +95,11 @@ private:
 	void makeOffset();
 
 	static const unsigned long COUNTER_PER_1MSEC = 8;
-#if 0
+
 	static const int LED_BRIGHTNESS_WAITING = 1;
 	static const int LED_BRIGHTNESS_INPUT_DETECTED = 2;
 	static const int LED_BRIGHTNESS_SOUND_GENERATING = 4;
-#endif
-	static const int LED_BRIGHTNESS_WAITING = 1;
-	static const int LED_BRIGHTNESS_INPUT_DETECTED = 200;
-	static const int LED_BRIGHTNESS_SOUND_GENERATING = 200;
+
 
 	static const int MOIDS_INPUT_TOO_BIG;
 	static const int DELAY_FOR_STATE_TRANSITION;

@@ -1,14 +1,17 @@
 
+
+#define F_CPU 8000000UL
+#include <Arduino.h>
 #include <util/delay.h>
 #include <stdint.h>
 #include "Timer2_125usec.h"
 #include "Moids.h"
+#include "compensation_after2025.h"
+
 
 void delay_us(const uint32_t d)
-{
-	for (uint32_t i = 0u; i < d; ++i) {
-		_delay_us(1);
-	}
+{	
+	delayMicroseconds(d);
 }
 /* ========================================================================
   macros for setting and clearing register bits
@@ -30,7 +33,7 @@ static const int OUTPUT_LED_PINS[MOIDS_PER_UNIT]   = {6, 10, 9};
 static const int OUTPUT_RELAY_PINS[MOIDS_PER_UNIT] = {8, 7, 4};
 
 static const int LED_BRIGHTNESS_OFF = 1;
-static const int LED_BRIGHTNESS_ON = 200;
+static const int LED_BRIGHTNESS_ON = 4;
 
 // The Moids!
 Moids moids[MOIDS_PER_UNIT];
@@ -177,10 +180,9 @@ enum SequenceName
 	// end of sequense
 	moids_dead,
 };
-int currentSequence = showaDecay9;
-volatile int* sequence_length = &sequence_length_table[moids7];
+int currentSequence = randomPulse;
+volatile int* sequence_length = &sequence_length_table[currentSequence];
 
-bool led_state = false;
 void timerTick()
 {
 	static unsigned int sec = 0;
@@ -204,9 +206,9 @@ void timerTick()
 			return;
 		}
 
-		for (int i = 0; i < 1; ++i)
+		for (int i = 0; i < MOIDS_PER_UNIT; ++i)
 		{
-			moids[i].tick();
+			//moids[i].tick();
 		}
 
 		return;
@@ -410,10 +412,10 @@ void chooseMoidsDead()
 	pulseMode = false;
 	showaMode = false;
 
-	for (int i = 0; i < 1; ++i)
+	for (int i = 0; i < MOIDS_PER_UNIT; ++i)
 	{
 		analogWrite(OUTPUT_LED_PINS[i], 0);
-		digitalWrite(OUTPUT_RELAY_PINS[i], 0);
+		digitalWrite_with_delay_compensation(OUTPUT_RELAY_PINS[i], 0);
 	}
 }
 
@@ -423,16 +425,21 @@ void chooseMoidsThreshold(const int thres)
 	pulseMode = false;
 	showaMode = false;
 
+
 	cli();
 	Timer2_125usec::stop();
-	Timer2_125usec::set(10, timerTick);
-	Timer2_125usec::start();
 
-	for (int i = 0; i < 1; ++i)
+
+	for (int i = 0; i < MOIDS_PER_UNIT; ++i)
 	{
 		moids[i].setWaitAfterSoundDetect(*moids_wait);
 		moids[i].setMicThreshold(thres);
+		moids[i].resetFakeTimerCounter();
 	}
+
+	Timer2_125usec::set(10, timerTick);
+	Timer2_125usec::start();
+	sei();
 }
 
 void chooseShowaDecay(int probability)
@@ -481,25 +488,25 @@ void chooseShowaSequence(int prob_to_showa)
 }
 
 void setup()
-{
+{	
 	for (int i = 0; i < 13; i++)
 	{
 		pinMode(i, OUTPUT);
 	}
-	// set prescale to 16
+	// set ADC prescale to 16(make it faster)
 	sbi(ADCSRA, ADPS2);
 	cbi(ADCSRA, ADPS1);
 	cbi(ADCSRA, ADPS0);
 
 	randomSeed(analogRead(0));
 
-	for (int i = 0; i < 1; ++i)
+	for (int i = 0; i < MOIDS_PER_UNIT; ++i)
 	{
 		pinMode(OUTPUT_LED_PINS[i], OUTPUT);
 		pinMode(OUTPUT_RELAY_PINS[i], OUTPUT);
 	}
 
-	for (int i = 0; i < 1; i++)
+	for (int i = 0; i < MOIDS_PER_UNIT; i++)
 	{
 		moids[i].setInputMicPin(INPUT_MIC_PINS[i]);
 		moids[i].setOutputLEDPin(OUTPUT_LED_PINS[i]);
@@ -515,10 +522,12 @@ void setup()
 		}
 	}
 
+
 	cli();
-	Timer2_125usec::set(ONE_SEC_COUNT, timerTick); // 1sec
+	Timer2_125usec::set(ONE_SEC_COUNT, timerTick); // 
 	Timer2_125usec::start();
 	sei();
+	return;
 
     setNextSequenceData();
 }
@@ -537,7 +546,7 @@ void loop()
 	}
 	else if (moidsMode)
 	{
-		for (int i = 0; i < 1; ++i)
+		for (int i = 0; i < MOIDS_PER_UNIT; ++i)
 		{
 			moids[i].loop();
 		}
@@ -564,27 +573,29 @@ void makeShowa()
 
 	int randomValue = random(3);
 	analogWrite(OUTPUT_LED_PINS[randomValue], LED_BRIGHTNESS_ON);
-	digitalWrite(OUTPUT_RELAY_PINS[randomValue], HIGH);
+	digitalWrite_with_delay_compensation(OUTPUT_RELAY_PINS[randomValue], HIGH);
 
 	delay_us(*showa_delay);
 	analogWrite(OUTPUT_LED_PINS[randomValue], LED_BRIGHTNESS_OFF);
-	digitalWrite(OUTPUT_RELAY_PINS[randomValue], LOW);
+	digitalWrite_with_delay_compensation(OUTPUT_RELAY_PINS[randomValue], LOW);
 }
 
 void onAll()
 {
-	for (int i = 0; i < 1; ++i)
+	for (int i = 0; i < MOIDS_PER_UNIT; ++i)
 	{
-		digitalWrite(OUTPUT_RELAY_PINS[i], HIGH);
+		digitalWrite_with_delay_compensation(OUTPUT_RELAY_PINS[i], HIGH);
 		analogWrite(OUTPUT_LED_PINS[i], LED_BRIGHTNESS_ON);
 	}
+
 }
 
 void offAll()
 {
-	for (int i = 0; i < 1; ++i)
+	for (int i = 0; i < MOIDS_PER_UNIT; ++i)
 	{
-		digitalWrite(OUTPUT_RELAY_PINS[i], LOW);
+		digitalWrite_with_delay_compensation(OUTPUT_RELAY_PINS[i], LOW);
 		analogWrite(OUTPUT_LED_PINS[i], LED_BRIGHTNESS_OFF);
 	}
+
 }

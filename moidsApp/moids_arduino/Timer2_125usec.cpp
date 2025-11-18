@@ -37,64 +37,64 @@ volatile unsigned int Timer2_125usec::tcnt2;
 void Timer2_125usec::set(unsigned long ms, void (*f)()) {
 	float prescaler = 0.0;
 
-	TIMSK2 &= ~(1<<TOIE2);
-	TCCR2A &= ~((1<<WGM21) | (1<<WGM20));
-	TCCR2B &= ~(1<<WGM22);
-	ASSR &= ~(1<<AS2);
-	TIMSK2 &= ~(1<<OCIE2A);
-	
-	if ((F_CPU >= 1000000UL) && (F_CPU <= 16000000UL)) {	// prescaler set to 64
-		TCCR2B |= (1<<CS22);
-		TCCR2B &= ~((1<<CS21) | (1<<CS20));
-		prescaler = 512.f; // 125uSec resolution // original was 64.f;
-	} else if (F_CPU < 1000000UL) {	// prescaler set to 8
-		TCCR2B |= (1<<CS21);
-		TCCR2B &= ~((1<<CS22) | (1<<CS20));
-		prescaler = 256.f;//128.0;
-	} else { // F_CPU > 16Mhz, prescaler set to 128
-		TCCR2B |= ((1<<CS22) | (1<<CS20));
-		TCCR2B &= ~(1<<CS21);
-		prescaler = 128.f;//2048.0;
+	TIMSK2 &= ~(1 << TOIE2);
+	TCCR2A &= ~((1 << WGM21) | (1 << WGM20));
+	TCCR2B &= ~(1 << WGM22);
+	ASSR &= ~(1 << AS2);
+	TIMSK2 &= ~(1 << OCIE2A);
+
+	if ((F_CPU >= 1000000UL) && (F_CPU <= 16000000UL)) {  // prescaler set to 64
+		TCCR2B |= (1 << CS22);
+		TCCR2B &= ~((1 << CS21) | (1 << CS20));
+		prescaler = 64.f * 8;             // 125uSec resolution // original was 64.f;
+	} else if (F_CPU < 1000000UL) {  // prescaler set to 8
+		TCCR2B |= (1 << CS21);
+		TCCR2B &= ~((1 << CS22) | (1 << CS20));
+		prescaler = 8.f;
+	} else {              // F_CPU > 16Mhz, prescaler set to 128
+		TCCR2B |= ((1 << CS22) | (1 << CS20));
+		TCCR2B &= ~(1 << CS21);
+		prescaler = 128.f;
 	}
-	
+
 	tcnt2 = 256 - (int)((float)F_CPU * 0.001 / prescaler);
-	
+
 	if (ms == 0)
 		msecs = 1;
 	else
 		msecs = ms;
-		
+
 	func = f;
 }
 
 void Timer2_125usec::start() {
 	count = 0;
 	overflowing = 0;
-#if defined (__AVR_ATmega168__) || defined (__AVR_ATmega48__) || defined (__AVR_ATmega88__)
+#if defined(__AVR_ATmega168__) || defined(__AVR_ATmega48__) || defined(__AVR_ATmega88__)
 	TCNT2 = tcnt2;
-	TIMSK2 |= (1<<TOIE2);
-#elif defined (__AVR_ATmega128__)
+	TIMSK2 |= (1 << TOIE2);
+#elif defined(__AVR_ATmega128__)
 	TCNT2 = tcnt2;
-	TIMSK |= (1<<TOIE2);
-#elif defined (__AVR_ATmega8__)
+	TIMSK |= (1 << TOIE2);
+#elif defined(__AVR_ATmega8__)
 	TCNT2 = tcnt2;
-	TIMSK |= (1<<TOIE2);
+	TIMSK |= (1 << TOIE2);
 #endif
 }
 
 void Timer2_125usec::stop() {
-#if defined (__AVR_ATmega168__) || defined (__AVR_ATmega48__) || defined (__AVR_ATmega88__)
-	TIMSK2 &= ~(1<<TOIE2);
-#elif defined (__AVR_ATmega128__)
-	TIMSK &= ~(1<<TOIE2);
-#elif defined (__AVR_ATmega8__)
-	TIMSK &= ~(1<<TOIE2);
+#if defined(__AVR_ATmega168__) || defined(__AVR_ATmega48__) || defined(__AVR_ATmega88__)
+	TIMSK2 &= ~(1 << TOIE2);
+#elif defined(__AVR_ATmega128__)
+	TIMSK &= ~(1 << TOIE2);
+#elif defined(__AVR_ATmega8__)
+	TIMSK &= ~(1 << TOIE2);
 #endif
 }
 
 void Timer2_125usec::_overflow() {
 	count += 1;
-	
+
 	if (count >= msecs && !overflowing) {
 		overflowing = 1;
 		count = 0;
@@ -104,13 +104,12 @@ void Timer2_125usec::_overflow() {
 }
 
 ISR(TIMER2_OVF_vect) {
-#if defined (__AVR_ATmega168__) || defined (__AVR_ATmega48__) || defined (__AVR_ATmega88__)
+#if defined(__AVR_ATmega168__) || defined(__AVR_ATmega48__) || defined(__AVR_ATmega88__)
 	TCNT2 = Timer2_125usec::tcnt2;
-#elif defined (__AVR_ATmega128__)
+#elif defined(__AVR_ATmega128__)
 	TCNT2 = Timer2_125usec::tcnt2;
-#elif defined (__AVR_ATmega8__)
+#elif defined(__AVR_ATmega8__)
 	TCNT2 = Timer2_125usec::tcnt2;
 #endif
 	Timer2_125usec::_overflow();
 }
-
