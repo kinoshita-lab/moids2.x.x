@@ -64,11 +64,12 @@ void Moids::init() {
   changeState(ReadAnalog);
 }
 
-void Moids::makeOffset() {
+void Moids::makeOffset(const int num_read) {
   float offset = 0.f;
 
-  for (int i = 0; i < 100; i++) {
-    offset += 0.01 * analogRead(m_inputMicPin);
+  for (int i = 0; i < num_read; i++) {
+    const float mag = 1.0f / (float)num_read;
+    offset += mag * analogRead(m_inputMicPin);
   }
 
   m_micOffset = (int)offset;

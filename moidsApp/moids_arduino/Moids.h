@@ -92,7 +92,7 @@ private:
 	volatile int m_micInput[2];
 	bool m_firstTimeAfterStateTransition;
 	volatile int m_dontReadCounter;
-	void makeOffset();
+	void makeOffset(const int num_read = 100);
 
 	static const unsigned long COUNTER_PER_1MSEC = 8;
 
