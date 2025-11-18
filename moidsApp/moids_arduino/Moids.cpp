@@ -50,7 +50,6 @@ void Moids::init() {
   m_micOffset = 0;
   m_nopWait = (unsigned long)500;
   m_nopWaitCounter = 0;
-  m_needOscillation = false;
   m_relayOffTime = 0;
   m_relayOffCounter = 0;
   m_oscillatorCountMax = 0;
@@ -108,20 +107,16 @@ void Moids::readAnalogInput() {
 
   if (m_firstTimeAfterStateTransition) {
     m_firstTimeAfterStateTransition = false;
-    makeOffset();
-
-    int read = analogRead(m_inputMicPin) - m_micOffset;
-    for (int i = 0; i < MIC_INPUT_ARRAY_LENGTH; i++) {
-      m_micInput[i] = read;
-    }
+    makeOffset();    
   }
 
-  // read Input
+  // read Inputs
   m_micInput[0] = analogRead(m_inputMicPin) - m_micOffset;
+  delayMicroseconds(SOUND_READ_PERIOD);
+  m_micInput[1] = analogRead(m_inputMicPin) - m_micOffset;
 
   // check threshold
   bool changed = checkInput();
-  m_micInput[1] = m_micInput[0];
 
   if (changed) {
     changeState(SoundInput);

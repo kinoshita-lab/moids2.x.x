@@ -108,15 +108,13 @@ private:
 	static const int NUM_OTHER_MOIDS = 2;
 	volatile int m_numOtherMoids;
 
-	Moids* m_otherMoids[NUM_OTHER_MOIDS];
+	Moids* m_otherMoids[NUM_OTHER_MOIDS];	
 
 	static const int sound_table_on[];
 	static const int sound_table_off[];
 	static const int sound_durations[];
-	static const int sound_table_length;
+	static const int sound_table_length;	
 
-
-
-	bool m_needOscillation;
+	static constexpr int SOUND_READ_PERIOD = 125; // in usec = Fs = 8kHz
 };
 
