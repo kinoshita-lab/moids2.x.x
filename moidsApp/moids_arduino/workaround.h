@@ -6,4 +6,5 @@
 // 補正版delay関数マクロ
 #define delay_comp(ms) delay((unsigned long)(ms) * TIME_FACTOR)
 
+#define EXTRA_DELAY_US (145)
 #endif // WORKAROUND_H
