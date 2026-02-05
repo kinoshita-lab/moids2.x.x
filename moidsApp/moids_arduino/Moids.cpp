@@ -1,8 +1,10 @@
 #include "Arduino.h"
 #include "Moids.h"
-
+#include <digitalWriteFast.h>
+#include "workaround.h"
+#include "debug.h"
 // 反応するときにデカすぎる場合をハネる。値が大きい方が反応しやすい。最小は0。
-const int Moids::MOIDS_INPUT_TOO_BIG = 4;
+const int Moids::MOIDS_INPUT_TOO_BIG = 100;
 
 // 状態が変わった時にちょっと待つ（誤動作防止用) 最小は0。最大でも10くらい。
 const int Moids::DELAY_FOR_STATE_TRANSITION = 1;
@@ -51,8 +53,11 @@ const int Moids::sound_durations[] =
         150,
 };
 
+int Moids::id_count = 0;
 Moids::Moids()
 {
+    m_id = id_count;
+    id_count++;
 }
 
 void Moids::init()
@@ -89,6 +94,7 @@ void Moids::makeOffset()
     }
 
     m_micOffset = (int)offset;
+    DEBUG_PRINTLN("Mic offset: " + String(m_micOffset));
 }
 
 void Moids::setMicThreshold(const int thres)
@@ -131,28 +137,22 @@ void Moids::readAnalogInput()
 
     // read Input
     m_micInput[0] = analogRead(m_inputMicPin) - m_micOffset;
+    m_micInput[1] = analogRead(m_inputMicPin) - m_micOffset;
 
     // check threshold
-    bool changed  = checkInput();
-    m_micInput[1] = m_micInput[0];
+    bool changed = checkInput();
 
     if (changed) {
-        if (STRICT_CHECKING) {
-            // double checking
-            m_micInput[0] = analogRead(m_inputMicPin) - m_micOffset;
-            changed       = checkInput();
-            m_micInput[1] = m_micInput[0];
-        }
-
-        if (changed) {
-            changeState(SoundInput);
-        }
+        DEBUG_PRINTLN(String(m_id) + " : Mic input detected: ");
+        changeState(SoundInput);
     }
 }
 
 bool Moids::checkInput()
 {
-    return abs(m_micInput[0] - m_micInput[1]) > m_micThreshold && abs(m_micInput[0] - m_micInput[1]) < m_micThreshold + MOIDS_INPUT_TOO_BIG;
+    const int diff = abs(m_micInput[0] - m_micInput[1]);
+
+    return diff > m_micThreshold;
 }
 
 // tick from MsTimer2, assuming tick cycle is 125 usec
@@ -191,7 +191,7 @@ void Moids::tickSoundInputState()
 
     m_waitAfterDetectCounter = 0;
 
-    digitalWrite(m_outputRelayPin, HIGH);
+    digitalWriteFast(m_outputRelayPin, HIGH);
     analogWrite(m_outputLEDPin, LED_BRIGHTNESS_SOUND_GENERATING);
     changeState(GenerateSound);
 }
@@ -219,7 +219,7 @@ void Moids::oscillate()
     if (m_oscillation_high) {
         if (m_timerCounter > m_relayOnTime) {
             m_timerCounter = 0;
-            digitalWrite(m_outputRelayPin, LOW);
+            digitalWriteFast(m_outputRelayPin, LOW);
             m_oscillation_high = false;
         }
 
@@ -236,14 +236,14 @@ void Moids::oscillate()
         }
 
         m_timerCounter = 0;
-        digitalWrite(m_outputRelayPin, HIGH);
+        digitalWriteFast(m_outputRelayPin, HIGH);
         m_oscillation_high = true;
     }
 }
 
 void Moids::toNop()
 {
-    digitalWrite(m_outputRelayPin, LOW);
+    digitalWriteFast(m_outputRelayPin, LOW);
     m_relayOnTimeCounter = 0;
     analogWrite(m_outputLEDPin, 0);
     changeState(Nop);
@@ -278,7 +278,7 @@ void Moids::changeState(const int state)
     }
 
     if (DELAY_FOR_STATE_TRANSITION) {
-        delay(DELAY_FOR_STATE_TRANSITION);
+        delay_comp(DELAY_FOR_STATE_TRANSITION);
     }
 }
 
@@ -316,8 +316,10 @@ void Moids::broadCastGenerateSoundState(bool start)
 void Moids::receiveOtherMoidsMessageSoundState(bool start, int relayPin)
 {
     if (start) {
+        //DEBUG_PRINTLN(String(m_id) + " : Received sound start from relay pin " + String(relayPin));
         m_dontReadCounter++;
     } else {
+        //DEBUG_PRINTLN(String(m_id) + " : Received sound stop from relay pin " + String(relayPin));
         m_dontReadCounter--;
     }
 }
@@ -328,16 +330,23 @@ void Moids::determineSound()
 
     // randomize sound
     const int soundIndex = random(sound_table_length + 1);
-    m_needOscillation    = soundIndex < 0;
-
+    
     m_relayOnTime  = sound_table_on[soundIndex];
     m_relayOffTime = sound_table_off[soundIndex];
 
-    if (m_needOscillation) {
-        m_timerCounter     = 0;
-        m_oscillation_high = true;
-        digitalWrite(m_outputRelayPin, HIGH);
-        m_oscillatorCountMax = sound_durations[soundIndex];
-        m_oscillationCount   = 0;
-    }
+    m_needOscillation = true;//(soundIndex < 0);
+
+	m_relayOnTime = sound_table_on[soundIndex];
+	m_relayOffTime = sound_table_off[soundIndex];
+
+
+	if (m_needOscillation)
+	{
+        DEBUG_PRINTLN(String(m_id) + " : Generating sound with oscillation, index: " + String(soundIndex));
+		m_timerCounter = 0;
+		m_oscillation_high = true;
+		digitalWriteFast(m_outputRelayPin, HIGH);
+		m_oscillatorCountMax =  sound_durations[soundIndex];
+		m_oscillationCount = 0;
+	}
 }

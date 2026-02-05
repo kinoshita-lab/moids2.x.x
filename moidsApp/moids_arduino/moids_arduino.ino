@@ -13,8 +13,6 @@
 
 
 
-//int my_putc(char c, FILE *t) { return Serial.write(c); }
-
 #ifndef cbi
 #define cbi(sfr, bit) (_SFR_BYTE(sfr) &= ~_BV(bit))
 #endif
@@ -23,6 +21,49 @@
 #endif
 
 Moids moids[MOIDS_PER_UNIT];
+
+bool led_state                = false;
+unsigned int timerTickCounter = 0;
+unsigned int moidsSec         = 0;
+bool print_sec                = false;
+
+bool should_goto_next_sequence = false;
+
+void timerTick()
+{
+    timerTickCounter++;
+
+    if (moidsMode) {
+        if (timerTickCounter >= ONE_SEC_COUNT) {
+            timerTickCounter = 0;
+            moidsSec++;
+        }
+
+        if (moidsSec >= sequence_length) {
+            moidsSec = 0;
+            sequence_length++;
+            currentSequence++;
+            should_goto_next_sequence = true;
+            return;
+        }
+
+        for (int i = 0; i < MOIDS_PER_UNIT; ++i) {
+            moids[i].tick();
+        }
+
+        return;
+    }
+
+
+    if (pulseMode || showaMode) {
+        if (timerTickCounter >= sequence_length) {
+            timerTickCounter = 0;
+            sequence_length++;
+            currentSequence++;
+            should_goto_next_sequence = true;
+        }
+    }
+}
 
 void setup_timer() {
   cli();
@@ -40,11 +81,13 @@ void setup_adc() {
   cbi(ADCSRA, ADPS0);
 }
 
+
 void setup() {
 
+
+  moids_wait = pgm_read_word_near(&moids_wait_table[moids_wait_index]);
 #ifdef DEBUG
   Serial.begin(115200);
-  //fdevopen(&my_putc, 0);
 #endif
   for (int i = 0; i < 13; i++) {
     pinMode(i, OUTPUT);
@@ -72,11 +115,15 @@ void setup() {
   }
   setup_timer();
 
-  setNextSequenceData();
+  should_goto_next_sequence = true;
 }
 
 void loop() {
-
+  if (should_goto_next_sequence) {
+    should_goto_next_sequence = false;
+    setNextSequenceData();
+  }
+  Serial.flush();
   if (pulseMode) {
     makePulse();
     return;

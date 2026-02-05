@@ -1,6 +1,7 @@
 #include "moids_constants.h"
 
-volatile int pulse_high_table[] = {
+
+const uint16_t pulse_high_table[]  PROGMEM= {
     125,
     125,
     250,
@@ -52,9 +53,9 @@ volatile int pulse_high_table[] = {
     0,
     0,
 };
-volatile int* pulse_high = &pulse_high_table[0];
+uint16_t pulse_high = pulse_high_table[0];
 
-volatile int pulse_low_table[] = {
+PROGMEM  const uint16_t pulse_low_table[]  = {
     125,
     250,
     250,
@@ -106,24 +107,24 @@ volatile int pulse_low_table[] = {
     0,
     0,
 };
-volatile int* pulse_low = &pulse_low_table[0];
+uint16_t pulse_low = pulse_low_table[0];
 
-volatile int showa_delay_table[] = {
+  const uint16_t showa_delay_table[]  = {
     125,
 };
-volatile int* showa_delay = &showa_delay_table[0];
+uint16_t showa_delay = showa_delay_table[0];
 
-volatile int moids_on_table[] = {
+  const uint16_t moids_on_table[]  = {
     80,
 };
-volatile int* moids_on = &moids_on_table[0];
+uint16_t moids_on = moids_on_table[0];
 
-volatile int moids_wait_table[] = {
+PROGMEM  const uint16_t moids_wait_table[]  = {
     375,
 };
-volatile int* moids_wait = &moids_wait_table[0];
+uint16_t moids_wait = 0;
 
-volatile int sequence_length_table[] = {
+PROGMEM const uint16_t sequence_length_table[]  = {
     0,
     0,
     0,
@@ -175,4 +176,63 @@ volatile int sequence_length_table[] = {
     600,
 };
 
-volatile int* sequence_length = &sequence_length_table[0];
+# if 0 // for testing
+PROGMEM const uint16_t sequence_length_table[] = {
+    0,
+    0,
+    0,
+    0,
+    1,
+
+    1,
+    1,
+    1,
+    1,
+
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    0,
+    1,
+    0,
+    1,
+    0,
+    1,
+    0,
+    1,
+    60 * 14,
+    5,
+    4,
+    3,
+    2,
+    1,
+    1,
+    600,
+};
+#endif
+
+uint16_t sequence_length = 0;
+
+
+int pulse_high_index = 0;
+int pulse_low_index = 0;
+int showa_delay_index = 0;
+int moids_on_index = 0;
+int moids_wait_index = 0;
+int sequence_length_index = 0;

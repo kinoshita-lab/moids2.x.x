@@ -1,0 +1,6 @@
+{
+    "configuration": "cpu=8MHzatmega168",
+    "board": "arduino:avr:pro",
+    "sketch": "moids_arduino.ino",
+    "port": "/dev/tty.Bluetooth-Incoming-Port"
+}

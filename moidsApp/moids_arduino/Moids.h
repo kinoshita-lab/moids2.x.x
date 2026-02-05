@@ -112,4 +112,6 @@ private:
     static const int sound_table_length;
 
     bool m_needOscillation;
+    static int id_count;
+    int m_id;
 };

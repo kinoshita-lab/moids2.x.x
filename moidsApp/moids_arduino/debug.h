@@ -1,5 +1,6 @@
 #pragma once
 
+//#define DEBUG
 #ifdef DEBUG
 #define DEBUG_PRINTF(fmt, ...) printf(fmt, __VA_ARGS__);
 #define DEBUG_PRINT(x) Serial.print(x)

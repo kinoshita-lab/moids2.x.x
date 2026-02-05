@@ -71,12 +71,6 @@ extern bool moidsMode;
 extern int showaProbability;
 extern int currentSequence;
 
-extern bool led_state;
-extern unsigned int timerTickCounter;
-extern unsigned int moidsSec;
-extern bool print_sec;
-
-void timerTick();
 void setNextSequenceData();
 
 void chooseMoidsDead();

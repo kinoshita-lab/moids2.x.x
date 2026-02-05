@@ -16,58 +16,23 @@ bool moidsMode = false;
 int showaProbability = 100;
 int currentSequence  = randomPulse;
 
-bool led_state                = false;
-unsigned int timerTickCounter = 0;
-unsigned int moidsSec         = 0;
-bool print_sec                = false;
-
-void timerTick()
-{
-    timerTickCounter++;
-
-    if (moidsMode) {
-        if (timerTickCounter >= ONE_SEC_COUNT) {
-            timerTickCounter = 0;
-            moidsSec++;
-        }
-
-        if (moidsSec >= *sequence_length) {
-            moidsSec = 0;
-            sequence_length++;
-            currentSequence++;
-            setNextSequenceData();
-            return;
-        }
-
-        for (int i = 0; i < MOIDS_PER_UNIT; ++i) {
-            moids[i].tick();
-        }
-
-        return;
-    }
-    DEBUG_PRINT("timerTick: ");
-    DEBUG_PRINT(timerTickCounter);
-    DEBUG_PRINT("sequence_length=");
-    DEBUG_PRINTLN(*sequence_length);
-
-    if (pulseMode || showaMode) {
-        if (timerTickCounter >= *sequence_length) {
-            timerTickCounter = 0;
-            sequence_length++;
-            currentSequence++;
-            setNextSequenceData();
-        }
-    }
-}
-
 void setNextSequenceData()
 {
-    while (0 == *sequence_length) {
-        sequence_length++;
-        currentSequence++;
+    while (0 == sequence_length) {
+            sequence_length_index++;
+            currentSequence++;
+            sequence_length = pgm_read_word_near(&sequence_length_table[currentSequence]);
+
     }
-    DEBUG_PRINT("setNextSequenceData: currentSequence=");
+    DEBUG_PRINT("Current Sequence index:");
     DEBUG_PRINTLN(currentSequence);
+    sequence_length = pgm_read_word_near(&sequence_length_table[currentSequence]);
+
+    DEBUG_PRINT("Next Sequence:");
+    DEBUG_PRINT(currentSequence);
+    DEBUG_PRINT(" Length:");
+    DEBUG_PRINTLN(sequence_length);
+    
 
     switch (currentSequence) {
     case randomPulse:
@@ -199,34 +164,35 @@ void setNextSequenceData()
 
     switch (currentSequence) {
     case moids7:
-        chooseMoidsThreshold(1);
+        DEBUG_PRINTLN("Choosing moids7");
+        chooseMoidsThreshold(10);
         break;
     case moids6:
-        chooseMoidsThreshold(2);
+        chooseMoidsThreshold(20);
         break;
     case moids5:
-        chooseMoidsThreshold(2);
+        chooseMoidsThreshold(20);
         break;
     case moids4:
-        chooseMoidsThreshold(2);
+        chooseMoidsThreshold(20);
         break;
     case moids_dead5:
-        chooseMoidsThreshold(5);
+        chooseMoidsThreshold(50);
         break;
     case moids_dead6:
-        chooseMoidsThreshold(6);
+        chooseMoidsThreshold(60);
         break;
     case moids_dead7:
-        chooseMoidsThreshold(7);
+        chooseMoidsThreshold(70);
         break;
     case moids_dead8:
-        chooseMoidsThreshold(8);
+        chooseMoidsThreshold(80);
         break;
     case moids_dead9:
-        chooseMoidsThreshold(9);
+        chooseMoidsThreshold(90);
         break;
     case moids_dead10:
-        chooseMoidsThreshold(10);
+        chooseMoidsThreshold(100);
         break;
     case moids_dead:
         chooseMoidsDead();
@@ -244,9 +210,11 @@ void chooseMoidsDead()
 
     for (int i = 0; i < MOIDS_PER_UNIT; ++i) {
         analogWrite(OUTPUT_LED_PINS[i], 0);
-        digitalWrite(OUTPUT_RELAY_PINS[i], 0);
+        digitalWriteFast(OUTPUT_RELAY_PINS[i], 0);
     }
 }
+
+extern void timerTick();
 
 void chooseMoidsThreshold(const int thres)
 {
@@ -259,7 +227,7 @@ void chooseMoidsThreshold(const int thres)
     Timer2_125usec::start();
 
     for (int i = 0; i < MOIDS_PER_UNIT; ++i) {
-        moids[i].setWaitAfterSoundDetect(*moids_wait);
+        moids[i].setWaitAfterSoundDetect(moids_wait);
         moids[i].setMicThreshold(thres);
     }
 }
@@ -270,60 +238,53 @@ void chooseDelayedShowa(int delayTime)
 {
     showaMode    = true;
     pulseMode    = false;
-    *showa_delay = delayTime;
+    showa_delay = delayTime;
 }
 
 void choosePulseSequence(int prob_to_zero, int max_seq_number)
 {
-    DEBUG_PRINT("choosePulseSequence: prob_to_zero=");
-    DEBUG_PRINT(prob_to_zero);
-    DEBUG_PRINT(", max_seq_number=");
-    DEBUG_PRINTLN(max_seq_number);
     pulseMode       = true;
     int randomValue = random(101);
     if (randomValue <= prob_to_zero) {
-        pulse_high = &pulse_high_table[0];
-        pulse_low  = &pulse_low_table[0];
+        pulse_high = pgm_read_word_near(&pulse_high_table[0]);
+        pulse_low  = pgm_read_word_near(&pulse_low_table[0]);
         return;
     }
 
     randomValue = random(max_seq_number + 1);
-    pulse_high  = &pulse_high_table[0] + randomValue;
-    pulse_low   = &pulse_low_table[0] + randomValue;
+    pulse_high  = pgm_read_word_near(&pulse_high_table[randomValue]);
+    pulse_low   = pgm_read_word_near(&pulse_low_table[randomValue]);
 }
 
 void chooseShowaSequence(int prob_to_showa)
 {
-    DEBUG_PRINT("chooseShowaSequence: prob_to_showa=");
-    DEBUG_PRINTLN(prob_to_showa);
-
     int randomValue = random(101);
     if (randomValue <= prob_to_showa) {
         showaMode   = true;
         pulseMode   = false;
-        showa_delay = &showa_delay_table[0];
+        showa_delay = pgm_read_word_near(&showa_delay_table[0]);
         return;
     }
     showaMode = false;
     pulseMode = true;
 
-    pulse_high = &pulse_high_table[0];
-    pulse_low  = &pulse_low_table[0];
+    pulse_high = pgm_read_word_near(&pulse_high_table[0]);
+    pulse_low  = pgm_read_word_near(&pulse_low_table[0]);
 }
 
 void makePulse()
 {
     onAll();
-    delayMicroseconds(*pulse_high + EXTRA_DELAY_US);
+    delayMicroseconds(pulse_high + EXTRA_DELAY_US);
     offAll();
-    delayMicroseconds(*pulse_low + EXTRA_DELAY_US);
+    delayMicroseconds(pulse_low + EXTRA_DELAY_US);
 }
 
 void makeShowa()
 {
     int showaOnOffRandom = random(101);
     if (showaOnOffRandom > showaProbability) {
-        delayMicroseconds(*showa_delay + EXTRA_DELAY_US);
+        delayMicroseconds(showa_delay + EXTRA_DELAY_US);
         return;
     }
 
@@ -331,7 +292,7 @@ void makeShowa()
     analogWrite(OUTPUT_LED_PINS[randomValue], LED_BRIGHTNESS_ON);
     digitalWriteFast(OUTPUT_RELAY_PINS[randomValue], HIGH);
 
-    delayMicroseconds(*showa_delay + EXTRA_DELAY_US);
+    delayMicroseconds(showa_delay + EXTRA_DELAY_US);
     analogWrite(OUTPUT_LED_PINS[randomValue], LED_BRIGHTNESS_OFF);
     digitalWriteFast(OUTPUT_RELAY_PINS[randomValue], LOW);
 }
