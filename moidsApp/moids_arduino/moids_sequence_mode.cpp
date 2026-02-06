@@ -19,10 +19,9 @@ int currentSequence  = randomPulse;
 void setNextSequenceData()
 {
     while (0 == sequence_length) {
-            sequence_length_index++;
-            currentSequence++;
-            sequence_length = pgm_read_word_near(&sequence_length_table[currentSequence]);
-
+        sequence_length_index++;
+        currentSequence++;
+        sequence_length = pgm_read_word_near(&sequence_length_table[currentSequence]);
     }
     DEBUG_PRINT("Current Sequence index:");
     DEBUG_PRINTLN(currentSequence);
@@ -32,7 +31,6 @@ void setNextSequenceData()
     DEBUG_PRINT(currentSequence);
     DEBUG_PRINT(" Length:");
     DEBUG_PRINTLN(sequence_length);
-    
 
     switch (currentSequence) {
     case randomPulse:
@@ -165,7 +163,7 @@ void setNextSequenceData()
     switch (currentSequence) {
     case moids7:
         DEBUG_PRINTLN("Choosing moids7");
-        chooseMoidsThreshold(10);
+        chooseMoidsThreshold(5);
         break;
     case moids6:
         chooseMoidsThreshold(20);
@@ -200,6 +198,42 @@ void setNextSequenceData()
     default:
         break;
     }
+
+    // 2026 add precise mode transition
+    switch (currentSequence) {
+    case moids_transition_thres_0:
+        chooseMoidsThreshold(0);
+        break;
+    case moids_transition_thres_1:
+        chooseMoidsThreshold(1);
+        break;
+    case moids_transition_thres_2:
+        chooseMoidsThreshold(2);
+        break;
+    case moids_transition_thres_3:
+        chooseMoidsThreshold(3);
+        break;
+    case moids_transition_thres_4:
+        chooseMoidsThreshold(4);
+        break;
+    case moids_transition_thres_5:
+        chooseMoidsThreshold(5);
+        break;  
+    case moids_transition_thres_6:
+        chooseMoidsThreshold(6);
+        break;
+    case moids_transition_thres_7:
+        chooseMoidsThreshold(7);
+        break;
+    case moids_transition_thres_8:
+        chooseMoidsThreshold(8);
+        break;
+    case moids_transition_thres_9:
+        chooseMoidsThreshold(9);
+        break;
+    default:
+        break;
+    }
 }
 
 void chooseMoidsDead()
@@ -218,6 +252,7 @@ extern void timerTick();
 
 void chooseMoidsThreshold(const int thres)
 {
+    DEBUG_PRINTLN("Choosing Moids Threshold: " + String(thres));
     moidsMode = true;
     pulseMode = false;
     showaMode = false;
@@ -236,8 +271,8 @@ void chooseShowaDecay(int probability) { showaProbability = probability; }
 
 void chooseDelayedShowa(int delayTime)
 {
-    showaMode    = true;
-    pulseMode    = false;
+    showaMode   = true;
+    pulseMode   = false;
     showa_delay = delayTime;
 }
 

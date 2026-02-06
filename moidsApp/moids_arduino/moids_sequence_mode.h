@@ -49,7 +49,19 @@ enum SequenceName
     showaDecay16,
     showaDecay9,
 
-    moids7,
+    // 2026 add precized moids sequences
+    moids_transition_thres_0,
+    moids_transition_thres_1,
+    moids_transition_thres_2,
+    moids_transition_thres_3,
+    moids_transition_thres_4,
+    moids_transition_thres_5,
+    moids_transition_thres_6,
+    moids_transition_thres_7,
+    moids_transition_thres_8,
+    moids_transition_thres_9,
+
+    moids7, // thres = 10
     moids6,
     moids5,
     moids4,

@@ -9,16 +9,9 @@
 #include "moids_pins.h"
 #include "moids_sequence_mode.h"
 #include "debug.h"
-//#define DEBUG
+#include "common.h"
 
 
-
-#ifndef cbi
-#define cbi(sfr, bit) (_SFR_BYTE(sfr) &= ~_BV(bit))
-#endif
-#ifndef sbi
-#define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
-#endif
 
 Moids moids[MOIDS_PER_UNIT];
 
@@ -88,6 +81,10 @@ void setup() {
   moids_wait = pgm_read_word_near(&moids_wait_table[moids_wait_index]);
 #ifdef DEBUG
   Serial.begin(115200);
+  for (auto i = 0; i < 10; ++i) {
+     Serial.println("Debug mode enabled");
+     delay(500);
+  }
 #endif
   for (int i = 0; i < 13; i++) {
     pinMode(i, OUTPUT);

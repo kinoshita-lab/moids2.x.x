@@ -67,7 +67,7 @@ private:
     void tickNopState();
 
     // function pointer for state
-    void (Moids::*m_stateFunction)();
+    void (Moids::*m_timerFunction)();
 
     void determineSound();
 
@@ -114,4 +114,6 @@ private:
     bool m_needOscillation;
     static int id_count;
     int m_id;
+
+    bool m_tick_need_processed = false;
 };

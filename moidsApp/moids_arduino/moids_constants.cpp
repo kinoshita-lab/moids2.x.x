@@ -166,6 +166,19 @@ PROGMEM const uint16_t sequence_length_table[]  = {
     3,
     3,
     3,
+// 2026 add precized moids sequences
+    10, //moids_transition_thres_0,
+     9, //moids_transition_thres_1,
+     8, //moids_transition_thres_2,
+     7, //moids_transition_thres_3,
+     6, //moids_transition_thres_4,
+     5, //moids_transition_thres_5,
+     4, //moids_transition_thres_6,
+     3, //moids_transition_thres_7,
+     2, //moids_transition_thres_8,
+     1, //moids_transition_thres_9,
+
+
     60 * 14,
     5,
     4,
@@ -176,56 +189,6 @@ PROGMEM const uint16_t sequence_length_table[]  = {
     600,
 };
 
-# if 0 // for testing
-PROGMEM const uint16_t sequence_length_table[] = {
-    0,
-    0,
-    0,
-    0,
-    1,
-
-    1,
-    1,
-    1,
-    1,
-
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    0,
-    1,
-    0,
-    1,
-    0,
-    1,
-    0,
-    1,
-    60 * 14,
-    5,
-    4,
-    3,
-    2,
-    1,
-    1,
-    600,
-};
-#endif
 
 uint16_t sequence_length = 0;
 

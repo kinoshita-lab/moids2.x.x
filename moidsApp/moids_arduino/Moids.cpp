@@ -3,11 +3,12 @@
 #include <digitalWriteFast.h>
 #include "workaround.h"
 #include "debug.h"
+#include "common.h"
 // 反応するときにデカすぎる場合をハネる。値が大きい方が反応しやすい。最小は0。
 const int Moids::MOIDS_INPUT_TOO_BIG = 100;
 
 // 状態が変わった時にちょっと待つ（誤動作防止用) 最小は0。最大でも10くらい。
-const int Moids::DELAY_FOR_STATE_TRANSITION = 1;
+const int Moids::DELAY_FOR_STATE_TRANSITION = 0;
 
 // 音が入ってきたかどうか？のチェックをちょっと厳密にする。
 const bool Moids::STRICT_CHECKING = false;
@@ -117,6 +118,11 @@ void Moids::loop()
     if (ReadAnalog == m_state) {
         readAnalogInput();
     }
+
+    if (m_tick_need_processed) {
+        m_tick_need_processed = false;
+        (this->*m_timerFunction)();
+    }
 }
 
 void Moids::readAnalogInput()
@@ -159,7 +165,7 @@ bool Moids::checkInput()
 void Moids::tick()
 {
     m_timerCounter++;
-    (this->*m_stateFunction)();
+    m_tick_need_processed = true;
 }
 
 void Moids::tickNopState()
@@ -251,31 +257,33 @@ void Moids::toNop()
 
 void Moids::changeState(const int state)
 {
+    noInterrupts();
     m_state = state;
 
     switch (m_state) {
     case ReadAnalog:
         m_detect1stTime                 = false;
         m_firstTimeAfterStateTransition = true;
-        m_stateFunction                 = &Moids::tickReadAnalogState;
+        m_timerFunction                 = &Moids::tickReadAnalogState;
         analogWrite(m_outputLEDPin, LED_BRIGHTNESS_WAITING);
         break;
     case SoundInput:
         broadCastGenerateSoundState(true);
         determineSound();
-        m_stateFunction = &Moids::tickSoundInputState;
+        m_timerFunction = &Moids::tickSoundInputState;
         analogWrite(m_outputLEDPin, LED_BRIGHTNESS_INPUT_DETECTED);
         break;
     case GenerateSound:
-        m_stateFunction = &Moids::tickGenerateSoundState;
+        m_timerFunction = &Moids::tickGenerateSoundState;
         break;
     case Nop:
         broadCastGenerateSoundState(false);
-        m_stateFunction = &Moids::tickNopState;
+        m_timerFunction = &Moids::tickNopState;
         break;
     default:
         break;
     }
+    interrupts();
 
     if (DELAY_FOR_STATE_TRANSITION) {
         delay_comp(DELAY_FOR_STATE_TRANSITION);
